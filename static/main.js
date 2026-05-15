@@ -1,209 +1,257 @@
 /* ================================================================
-   Pipe Organ — Main controller
-   Keyboard mapping, UI rendering, event handling.
+   Pipe Organ — Main controller (Baroque multi-manual edition)
+   Four divisions mapped to keyboard rows, with visual feedback.
    ================================================================ */
 
 (function () {
   'use strict';
 
   // ------------------------------------------------------------------
-  // Note mapping: 26 letters A–Z → frequencies (A=440, C3–G6)
+  // Division definitions
+  // Each division maps a keyboard row → a set of notes (low→high)
   // ------------------------------------------------------------------
-  const NOTE_MAP = {
-    A: { freq: 130.81, label: 'C3' },
-    B: { freq: 146.83, label: 'D3' },
-    C: { freq: 164.81, label: 'E3' },
-    D: { freq: 174.61, label: 'F3' },
-    E: { freq: 196.00, label: 'G3' },
-    F: { freq: 220.00, label: 'A3' },
-    G: { freq: 246.94, label: 'B3' },
-    H: { freq: 261.63, label: 'C4' },
-    I: { freq: 293.66, label: 'D4' },
-    J: { freq: 329.63, label: 'E4' },
-    K: { freq: 349.23, label: 'F4' },
-    L: { freq: 392.00, label: 'G4' },
-    M: { freq: 440.00, label: 'A4' },
-    N: { freq: 493.88, label: 'B4' },
-    O: { freq: 523.25, label: 'C5' },
-    P: { freq: 587.33, label: 'D5' },
-    Q: { freq: 659.25, label: 'E5' },
-    R: { freq: 698.46, label: 'F5' },
-    S: { freq: 783.99, label: 'G5' },
-    T: { freq: 880.00, label: 'A5' },
-    U: { freq: 987.77, label: 'B5' },
-    V: { freq: 1046.50, label: 'C6' },
-    W: { freq: 1174.66, label: 'D6' },
-    X: { freq: 1318.51, label: 'E6' },
-    Y: { freq: 1396.91, label: 'F6' },
-    Z: { freq: 1567.98, label: 'G6' },
+  const DIVISIONS = {
+    solo: {
+      label: 'Solo',
+      cls: 'solo',
+      keys:  ['1','2','3','4','5','6','7','8','9','0','-','='],
+      notes: [
+        {freq:1046.50, lbl:'C6'}, {freq:1174.66, lbl:'D6'}, {freq:1318.51, lbl:'E6'},
+        {freq:1396.91, lbl:'F6'}, {freq:1567.98, lbl:'G6'}, {freq:1760.00, lbl:'A6'},
+        {freq:1975.53, lbl:'B6'}, {freq:2093.00, lbl:'C7'}, {freq:2349.32, lbl:'D7'},
+        {freq:2637.02, lbl:'E7'}, {freq:2793.83, lbl:'F7'}, {freq:3135.96, lbl:'G7'},
+      ],
+      pipeTint: 'linear-gradient(90deg,#c9a040,#e8d080,#f5e8b0,#e8d080,#c9a040)',
+    },
+    swell: {
+      label: 'Swell',
+      cls: 'swell',
+      keys:  ['Q','W','E','R','T','Y','U','I','O','P'],
+      notes: [
+        {freq:523.25, lbl:'C5'}, {freq:587.33, lbl:'D5'}, {freq:659.25, lbl:'E5'},
+        {freq:698.46, lbl:'F5'}, {freq:783.99, lbl:'G5'}, {freq:880.00, lbl:'A5'},
+        {freq:987.77, lbl:'B5'}, {freq:1046.50, lbl:'C6'}, {freq:1174.66, lbl:'D6'},
+        {freq:1318.51, lbl:'E6'},
+      ],
+      pipeTint: 'linear-gradient(90deg,#c0a860,#e0cc90,#f0e4c0,#e0cc90,#c0a860)',
+    },
+    great: {
+      label: 'Great',
+      cls: 'great',
+      keys:  ['A','S','D','F','G','H','J','K','L',';',"'"],
+      notes: [
+        {freq:261.63, lbl:'C4'}, {freq:293.66, lbl:'D4'}, {freq:329.63, lbl:'E4'},
+        {freq:349.23, lbl:'F4'}, {freq:392.00, lbl:'G4'}, {freq:440.00, lbl:'A4'},
+        {freq:493.88, lbl:'B4'}, {freq:523.25, lbl:'C5'}, {freq:587.33, lbl:'D5'},
+        {freq:659.25, lbl:'E5'}, {freq:698.46, lbl:'F5'},
+      ],
+      pipeTint: 'linear-gradient(90deg,#b8944e,#d4b87a,#e8d5a3,#f0e2b8,#e8d5a3,#d4b87a,#b8944e)',
+    },
+    choir: {
+      label: 'Choir',
+      cls: 'choir',
+      keys:  ['Z','X','C','V','B','N','M',',','.','/'],
+      notes: [
+        {freq:130.81, lbl:'C3'}, {freq:146.83, lbl:'D3'}, {freq:164.81, lbl:'E3'},
+        {freq:174.61, lbl:'F3'}, {freq:196.00, lbl:'G3'}, {freq:220.00, lbl:'A3'},
+        {freq:246.94, lbl:'B3'}, {freq:261.63, lbl:'C4'}, {freq:293.66, lbl:'D4'},
+        {freq:329.63, lbl:'E4'},
+      ],
+      pipeTint: 'linear-gradient(90deg,#8a6d40,#b89860,#d4b880,#c8a870,#a08050,#8a6d40)',
+    },
   };
 
-  const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  /** Build flat key→{freq,division,label} lookup */
+  const KEY_MAP = {};
+  for (const [divName, div] of Object.entries(DIVISIONS)) {
+    div.keys.forEach((k, i) => {
+      KEY_MAP[k] = {
+        freq: div.notes[i].freq,
+        division: divName,
+        label: div.notes[i].lbl,
+        cls: div.cls,
+      };
+    });
+  }
+
+  // Division display order (top → bottom in the organ case)
+  const DIV_ORDER = ['solo', 'swell', 'great', 'choir'];
 
   // ------------------------------------------------------------------
-  // DOM references
+  // DOM refs
   // ------------------------------------------------------------------
   const pipesContainer = document.getElementById('pipes-container');
-  const noteLabelsEl = document.getElementById('note-labels');
-  const keyboardEl = document.getElementById('keyboard');
+  const keyboardStack = document.getElementById('keyboard-stack');
   const tremulantBtn = document.getElementById('tremulant-btn');
 
-  /** Map: letter → { pipeEl, keyEl, labelEl } */
+  /** Map: keyChar → { pipeEl, keyEl } */
   const elements = {};
 
   // ------------------------------------------------------------------
-  // Build the UI: pipes, labels, keys
+  // Build the UI: pipes + keyboards per division
   // ------------------------------------------------------------------
   function buildUI() {
-    const totalNotes = LETTERS.length; // 26
+    DIV_ORDER.forEach((divName) => {
+      const div = DIVISIONS[divName];
+      const n = div.keys.length;
 
-    for (let i = 0; i < totalNotes; i++) {
-      const letter = LETTERS[i];
-      const { freq, label } = NOTE_MAP[letter];
+      // --- Pipes group ---
+      const groupEl = document.createElement('div');
+      groupEl.className = 'pipe-group pipe-group--' + div.cls;
+      groupEl.dataset.division = divName;
 
-      // --- Pipe ---
-      // Pipe height: lower notes → taller pipes (real organ physics)
-      // C3 (~131 Hz) → tallest; G6 (~1568 Hz) → shortest
-      const t = i / (totalNotes - 1); // 0 (low) → 1 (high)
-      const pipeHeight = Math.round(200 - t * 140); // 200px → 60px
-      const pipeWidth = Math.round(34 - t * 12);     // 34px → 22px (low notes wider)
+      // Height range for this division (choir=tallest → solo=shortest)
+      const heightMin = { choir: 130, great: 110, swell: 90, solo: 70 }[divName];
+      const heightMax = { choir: 200, great: 175, swell: 150, solo: 125 }[divName];
+      const widthBase  = { choir: 28, great: 26, swell: 24, solo: 22 }[divName];
 
-      const pipeEl = document.createElement('div');
-      pipeEl.className = 'pipe';
-      pipeEl.dataset.letter = letter;
-      pipeEl.dataset.freq = freq;
-      pipeEl.style.height = pipeHeight + 'px';
-      pipeEl.style.width = pipeWidth + 'px';
-      pipesContainer.appendChild(pipeEl);
+      for (let i = 0; i < n; i++) {
+        const t = i / (n - 1 || 1);
+        const h = Math.round(heightMax - t * (heightMax - heightMin));
+        const w = Math.round(widthBase - t * 6);
 
-      // --- Note label ---
-      const labelEl = document.createElement('div');
-      labelEl.className = 'note-label';
-      labelEl.dataset.letter = letter;
-      labelEl.textContent = label;
-      noteLabelsEl.appendChild(labelEl);
+        const pipeEl = document.createElement('div');
+        pipeEl.className = 'pipe pipe--' + div.cls;
+        pipeEl.dataset.key = div.keys[i];
+        pipeEl.dataset.freq = div.notes[i].freq;
+        pipeEl.dataset.division = divName;
+        pipeEl.style.height = h + 'px';
+        pipeEl.style.width  = w + 'px';
+        if (div.pipeTint) pipeEl.style.background = div.pipeTint;
 
-      // --- Key ---
-      const keyEl = document.createElement('button');
-      keyEl.className = 'key';
-      keyEl.dataset.letter = letter;
-      keyEl.dataset.freq = freq;
-      keyEl.textContent = letter;
-      // Click/tap support
-      keyEl.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        pressKey(letter);
-      });
-      keyEl.addEventListener('mouseup', () => releaseKey(letter));
-      keyEl.addEventListener('mouseleave', () => releaseKey(letter));
-      // Touch support
-      keyEl.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        pressKey(letter);
-      });
-      keyEl.addEventListener('touchend', () => releaseKey(letter));
-      keyboardEl.appendChild(keyEl);
+        groupEl.appendChild(pipeEl);
+        elements[div.keys[i]] = { ...(elements[div.keys[i]] || {}), pipeEl };
+      }
 
-      elements[letter] = { pipeEl, keyEl, labelEl };
-    }
+      pipesContainer.appendChild(groupEl);
+
+      // --- Keyboard row ---
+      const kbRow = document.createElement('div');
+      kbRow.className = 'keyboard-row keyboard-row--' + div.cls;
+
+      const labelSpan = document.createElement('span');
+      labelSpan.className = 'keyboard-label';
+      labelSpan.textContent = div.label;
+      kbRow.appendChild(labelSpan);
+
+      const keysWrap = document.createElement('div');
+      keysWrap.className = 'keyboard-keys';
+
+      for (let i = 0; i < n; i++) {
+        const keyChar = div.keys[i];
+        const info = KEY_MAP[keyChar];
+
+        const keyEl = document.createElement('button');
+        keyEl.className = 'key key--' + div.cls;
+        keyEl.dataset.key = keyChar;
+        keyEl.dataset.freq = info.freq;
+        keyEl.dataset.division = divName;
+        keyEl.textContent = keyChar;
+        keyEl.title = info.label + ' (' + div.label + ')';
+
+        // Mouse
+        keyEl.addEventListener('mousedown', (e) => { e.preventDefault(); press(keyChar); });
+        keyEl.addEventListener('mouseup',   () => release(keyChar));
+        keyEl.addEventListener('mouseleave',() => release(keyChar));
+        // Touch
+        keyEl.addEventListener('touchstart',(e) => { e.preventDefault(); press(keyChar); });
+        keyEl.addEventListener('touchend',  () => release(keyChar));
+
+        keysWrap.appendChild(keyEl);
+        elements[keyChar] = { ...(elements[keyChar] || {}), keyEl };
+      }
+
+      kbRow.appendChild(keysWrap);
+      keyboardStack.appendChild(kbRow);
+    });
   }
 
   // ------------------------------------------------------------------
-  // Organ engine (instantiated after first user gesture)
+  // Organ engine
   // ------------------------------------------------------------------
   let organ = null;
-  let organInitPromise = null; // guard against concurrent init
+  let initPromise = null;
 
   async function ensureOrgan() {
     if (organ) {
-      if (organ.ctx && organ.ctx.state === 'suspended') {
-        await organ.ctx.resume();
-      }
+      if (organ.ctx && organ.ctx.state === 'suspended') await organ.ctx.resume();
       return;
     }
-    // Serialise initialisation — prevent duplicate AudioContexts
-    if (!organInitPromise) {
-      organInitPromise = (async () => {
-        const engine = new PipeOrganEngine();
-        await engine.init();
-        organ = engine;
+    if (!initPromise) {
+      initPromise = (async () => {
+        const eng = new PipeOrganEngine();
+        await eng.init();
+        organ = eng;
       })();
     }
-    await organInitPromise;
+    await initPromise;
   }
 
   // ------------------------------------------------------------------
   // Press / release
   // ------------------------------------------------------------------
-  /** @type {Set<string>} */
-  const heldKeys = new Set();
+  const held = new Set();
 
-  async function pressKey(letter) {
-    if (heldKeys.has(letter)) return;
-    heldKeys.add(letter);
-
-    await ensureOrgan();
-
-    const info = NOTE_MAP[letter];
+  async function press(keyChar) {
+    if (held.has(keyChar)) return;
+    const info = KEY_MAP[keyChar];
     if (!info) return;
 
-    organ.noteOn(info.freq);
+    held.add(keyChar);
+    await ensureOrgan();
+    organ.noteOn(info.freq, info.division);
 
-    // Visual feedback
-    const els = elements[letter];
+    const els = elements[keyChar];
     if (els) {
-      els.pipeEl.classList.add('active');
-      els.keyEl.classList.add('active');
-      els.labelEl.classList.add('highlight');
+      if (els.pipeEl) els.pipeEl.classList.add('active');
+      if (els.keyEl)  els.keyEl.classList.add('active');
     }
   }
 
-  function releaseKey(letter) {
-    if (!heldKeys.has(letter)) return;
-    heldKeys.delete(letter);
+  function release(keyChar) {
+    if (!held.has(keyChar)) return;
+    held.delete(keyChar);
 
-    const info = NOTE_MAP[letter];
+    const info = KEY_MAP[keyChar];
     if (!info || !organ) return;
+    organ.noteOff(info.freq, info.division);
 
-    organ.noteOff(info.freq);
-
-    // Remove visual feedback
-    const els = elements[letter];
+    const els = elements[keyChar];
     if (els) {
-      els.pipeEl.classList.remove('active');
-      els.keyEl.classList.remove('active');
-      els.labelEl.classList.remove('highlight');
+      if (els.pipeEl) els.pipeEl.classList.remove('active');
+      if (els.keyEl)  els.keyEl.classList.remove('active');
     }
+  }
+
+  function releaseAll() {
+    for (const k of held) release(k);
+    held.clear();
   }
 
   // ------------------------------------------------------------------
   // Keyboard events
   // ------------------------------------------------------------------
   document.addEventListener('keydown', (e) => {
-    // Ignore if modifier held, or if target is an input
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-
-    const letter = e.key.toUpperCase();
-    if (!NOTE_MAP[letter]) return;
-
-    e.preventDefault();
-    pressKey(letter);
+    const ch = e.key.length === 1 ? e.key : '';
+    const upper = ch.toUpperCase();
+    if (ch && KEY_MAP[ch]) {
+      e.preventDefault(); press(ch);
+    } else if (upper !== ch && KEY_MAP[upper]) {
+      // e.g. ';' → upper=';' same char — won't double-fire
+      e.preventDefault(); press(upper);
+    }
   });
 
   document.addEventListener('keyup', (e) => {
-    const letter = e.key.toUpperCase();
-    if (!NOTE_MAP[letter]) return;
-    releaseKey(letter);
+    const ch = e.key.length === 1 ? e.key : '';
+    const upper = ch.toUpperCase();
+    if (ch && KEY_MAP[ch]) release(ch);
+    else if (upper !== ch && KEY_MAP[upper]) release(upper);
   });
 
-  // Handle window losing focus — release all keys
-  window.addEventListener('blur', () => {
-    for (const letter of heldKeys) {
-      releaseKey(letter);
-    }
-    heldKeys.clear();
-  });
+  window.addEventListener('blur', releaseAll);
 
   // ------------------------------------------------------------------
   // Tremulant button
@@ -216,13 +264,9 @@
   });
 
   // ------------------------------------------------------------------
-  // First-click init for AudioContext (browser policy)
+  // First gesture init
   // ------------------------------------------------------------------
-  document.addEventListener('click', async () => {
-    await ensureOrgan();
-  }, { once: true });
-
-  // Also init on first key press (handled in pressKey)
+  document.addEventListener('click', async () => { await ensureOrgan(); }, { once: true });
 
   // ------------------------------------------------------------------
   // Boot

@@ -1,377 +1,539 @@
 /* ================================================================
-   Pipe Organ — Cathedral Style
-   White church aesthetic. No emoji. Copper & gold pipe organ.
+   Pipe Organ — Baroque Cathedral Style
+   White palette with gold accents, maximalist ornamentation.
+   Coffered dome, spiral columns, gilded casework, four manuals.
    ================================================================ */
 
 /* --- Reset & Base --- */
-*, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
 html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  font-family: 'Cormorant Garamond', 'Times New Roman', Georgia, serif;
-  background: #faf8f5;
-  color: #3a3530;
-  user-select: none;
+  width:100%; height:100%; overflow:hidden;
+  font-family:'Cormorant Garamond','Times New Roman',Georgia,serif;
+  background:#faf8f5; color:#3a3530; user-select:none;
 }
 
 /* --- Cathedral Container --- */
 #cathedral {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+  width:100%; height:100%;
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
   background:
-    radial-gradient(ellipse at 50% 0%, rgba(255,252,245,0.95) 0%, rgba(245,240,230,0.8) 60%, rgba(225,218,205,0.6) 100%),
-    radial-gradient(circle at 20% 80%, rgba(210,195,170,0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(210,195,170,0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 0%, rgba(255,252,245,0.97) 0%, rgba(245,240,228,0.85) 55%, rgba(225,218,200,0.65) 100%),
+    radial-gradient(circle at 18% 85%, rgba(200,180,140,0.12) 0%, transparent 45%),
+    radial-gradient(circle at 82% 80%, rgba(200,180,140,0.10) 0%, transparent 45%),
     linear-gradient(180deg, #fefdfb 0%, #faf7f0 40%, #f2ece0 100%);
-  position: relative;
-  padding: 20px 20px 0;
+  position:relative; padding:12px 16px 0; overflow-y:auto;
 }
 
-/* --- Dome (vaulted ceiling) --- */
+/* ================================================================
+   DOME — Coffered ceiling with oculus
+   ================================================================ */
+#dome-area { width:88%; max-width:920px; position:relative; z-index:1; }
+
 #dome {
-  width: 85%;
-  max-width: 900px;
-  height: 120px;
-  position: relative;
-  background: linear-gradient(180deg,
-    rgba(240,235,222,0.9) 0%,
-    rgba(250,247,240,0.7) 40%,
-    rgba(255,252,248,0.3) 100%
-  );
-  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-  box-shadow:
-    inset 0 8px 32px rgba(180,165,140,0.2),
-    0 4px 16px rgba(160,145,125,0.15);
-  margin-bottom: -1px;
-  z-index: 1;
+  width:100%; height:140px; position:relative;
+  background: radial-gradient(ellipse at 50% 100%, rgba(245,240,228,0.9) 0%, rgba(235,228,210,0.6) 60%, rgba(220,210,190,0.3) 100%);
+  border-radius:50% 50% 0 0 / 100% 100% 0 0;
+  box-shadow: inset 0 10px 40px rgba(180,160,130,0.2), 0 4px 20px rgba(150,130,100,0.12);
+  overflow:hidden;
 }
 
-#dome-inner {
-  position: absolute;
-  bottom: 0;
-  left: 8%;
-  right: 8%;
-  height: 70%;
-  background: linear-gradient(180deg,
-    rgba(235,228,212,0.4) 0%,
-    rgba(250,247,240,0.2) 100%
-  );
-  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-  box-shadow: inset 0 4px 20px rgba(180,165,140,0.15);
+/* Coffered pattern — radial ribs */
+#dome-coffers {
+  position:absolute; inset:0;
+  background:
+    repeating-conic-gradient(
+      from -5deg,
+      rgba(210,195,165,0.2) 0deg 1deg,
+      transparent 1deg 10deg
+    );
+  border-radius:50% 50% 0 0 / 100% 100% 0 0;
 }
 
-/* --- Rose Window --- */
-#rose-window-container {
-  position: relative;
-  z-index: 2;
-  margin-top: -30px;
-  margin-bottom: 8px;
+#dome-ribs {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse at 50% 100%, transparent 30%, rgba(180,160,130,0.15) 70%, rgba(160,140,110,0.25) 100%);
+  border-radius:50% 50% 0 0 / 100% 100% 0 0;
 }
+
+#dome-oculus {
+  position:absolute; top:8px; left:50%; transform:translateX(-50%);
+  width:50px; height:50px; border-radius:50%;
+  background:radial-gradient(circle, #fefdfb 0%, #f0e8d4 40%, #e0d4b8 100%);
+  box-shadow: 0 0 30px rgba(255,252,245,0.6), inset 0 0 12px rgba(200,180,140,0.3);
+}
+
+/* ================================================================
+   CORNICES — Multi-layer entablature
+   ================================================================ */
+.cornice { width:100%; max-width:960px; position:relative; z-index:2; }
+
+.cornice-moulding { height:4px; margin:1px 0; }
+.cornice-moulding.c1 {
+  background:linear-gradient(180deg, rgba(220,200,160,0.5), rgba(240,225,190,0.8), rgba(220,200,160,0.5));
+  box-shadow:0 1px 3px rgba(0,0,0,0.06);
+}
+.cornice-moulding.c2 {
+  height:6px;
+  background:linear-gradient(180deg, #c8b080, #e0d0a8, #d4c090);
+  box-shadow:0 2px 6px rgba(0,0,0,0.08);
+}
+.cornice-moulding.c3 {
+  height:3px;
+  background:linear-gradient(180deg, #d4c090, #e8d8b0, #d4c090);
+}
+
+/* Dentil row */
+.cornice-dentils {
+  height:10px;
+  background:repeating-linear-gradient(90deg,
+    rgba(180,160,120,0.4) 0px, rgba(180,160,120,0.4) 6px,
+    transparent 6px, transparent 12px);
+  box-shadow:0 1px 2px rgba(0,0,0,0.05);
+}
+
+#cornice-upper { margin-top:0; }
+#cornice-lower { margin-top:2px; margin-bottom:4px; }
+
+/* ================================================================
+   CLERESTORY — Rose window + side arches
+   ================================================================ */
+#clerestory {
+  display:flex; align-items:center; justify-content:center;
+  width:76%; max-width:800px; gap:0; position:relative; z-index:2;
+  margin-bottom:2px;
+}
+
+/* Side arches (blind arcades) */
+.side-arch {
+  width:80px; height:140px;
+  background:radial-gradient(ellipse at 50% 100%, rgba(235,225,205,0.5) 0%, rgba(220,210,190,0.3) 70%, transparent 100%);
+  border-radius:50% 50% 0 0 / 60% 60% 0 0;
+  box-shadow:inset 0 4px 16px rgba(180,160,130,0.12);
+  position:relative;
+}
+.side-arch::after {
+  content:''; position:absolute; inset:4px;
+  border-radius:50% 50% 0 0 / 58% 58% 0 0;
+  border:1px solid rgba(180,160,130,0.25);
+}
+
+/* Rose window — enhanced Baroque version */
+#rose-window-container { position:relative; margin:0 6px; }
 
 #rose-window {
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  background: conic-gradient(
+  width:150px; height:150px; border-radius:50%;
+  background:conic-gradient(
     from 0deg,
-    #e8dfce 0deg 15deg,   #d4c8ae 15deg 30deg,
-    #e8dfce 30deg 45deg,  #d4c8ae 45deg 60deg,
-    #e8dfce 60deg 75deg,  #d4c8ae 75deg 90deg,
-    #e8dfce 90deg 105deg, #d4c8ae 105deg 120deg,
-    #e8dfce 120deg 135deg,#d4c8ae 135deg 150deg,
-    #e8dfce 150deg 165deg,#d4c8ae 165deg 180deg,
-    #e8dfce 180deg 195deg,#d4c8ae 195deg 210deg,
-    #e8dfce 210deg 225deg,#d4c8ae 225deg 240deg,
-    #e8dfce 240deg 255deg,#d4c8ae 255deg 270deg,
-    #e8dfce 270deg 285deg,#d4c8ae 285deg 300deg,
-    #e8dfce 300deg 315deg,#d4c8ae 315deg 330deg,
-    #e8dfce 330deg 345deg,#d4c8ae 345deg 360deg
+    #e8dfce 0deg 12deg, #d4c8ae 12deg 24deg,
+    #e8dfce 24deg 36deg, #d4c8ae 36deg 48deg,
+    #e8dfce 48deg 60deg, #d4c8ae 60deg 72deg,
+    #e8dfce 72deg 84deg, #d4c8ae 84deg 96deg,
+    #e8dfce 96deg 108deg,#d4c8ae 108deg 120deg,
+    #e8dfce 120deg 132deg,#d4c8ae 132deg 144deg,
+    #e8dfce 144deg 156deg,#d4c8ae 156deg 168deg,
+    #e8dfce 168deg 180deg,#d4c8ae 180deg 192deg,
+    #e8dfce 192deg 204deg,#d4c8ae 204deg 216deg,
+    #e8dfce 216deg 228deg,#d4c8ae 228deg 240deg,
+    #e8dfce 240deg 252deg,#d4c8ae 252deg 264deg,
+    #e8dfce 264deg 276deg,#d4c8ae 276deg 288deg,
+    #e8dfce 288deg 300deg,#d4c8ae 300deg 312deg,
+    #e8dfce 312deg 324deg,#d4c8ae 324deg 336deg,
+    #e8dfce 336deg 348deg,#d4c8ae 348deg 360deg
   );
-  box-shadow:
-    0 0 40px rgba(200,180,140,0.3),
-    0 0 80px rgba(200,180,140,0.15),
-    inset 0 0 20px rgba(180,160,120,0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
+  box-shadow:0 0 50px rgba(200,170,120,0.35), 0 0 100px rgba(200,170,120,0.12), inset 0 0 24px rgba(180,150,110,0.25);
+  display:flex; align-items:center; justify-content:center; position:relative;
 }
-
 #rose-window::before {
-  content: '';
-  position: absolute;
-  inset: 8px;
-  border-radius: 50%;
-  border: 2px solid rgba(180,160,120,0.5);
+  content:''; position:absolute; inset:6px; border-radius:50%;
+  border:2px solid rgba(180,150,110,0.55);
 }
-
 #rose-center {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #d4c8ae, #b8a88a);
-  box-shadow:
-    0 0 12px rgba(200,180,140,0.5),
-    inset 0 0 6px rgba(255,255,240,0.4);
-  z-index: 1;
+  width:28px; height:28px; border-radius:50%;
+  background:radial-gradient(circle, #d4c8ae, #b8a080);
+  box-shadow:0 0 14px rgba(200,170,120,0.5), inset 0 0 6px rgba(255,255,240,0.4);
+  z-index:1;
+}
+#rose-frame {
+  position:absolute; inset:-8px; border-radius:50%;
+  border:3px solid rgba(190,160,120,0.4);
+  box-shadow:0 0 16px rgba(190,160,120,0.2);
 }
 
-/* --- Pillars --- */
-.pillar {
-  position: absolute;
-  top: 100px;
-  bottom: 160px;
-  width: 40px;
-  background: linear-gradient(90deg,
-    rgba(225,218,205,0.5) 0%,
-    rgba(245,240,230,0.6) 20%,
-    rgba(255,252,245,0.7) 50%,
-    rgba(245,240,230,0.6) 80%,
-    rgba(225,218,205,0.5) 100%
+/* ================================================================
+   SPIRAL COLUMNS — Baroque Solomonic columns
+   ================================================================ */
+.spiral-column {
+  position:absolute; top:220px; width:36px; z-index:0;
+  display:flex; flex-direction:column; align-items:center;
+}
+#column-left  { left:4%; }
+#column-right { right:4%; }
+
+.column-capital {
+  width:44px; height:22px;
+  background:linear-gradient(180deg, #d4c090 0%, #c0a870 40%, #d8c8a0 60%, #c0a870 100%);
+  border-radius:4px 4px 0 0;
+  box-shadow:0 1px 4px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,240,0.3);
+  position:relative;
+}
+.column-capital::before {
+  content:''; position:absolute; bottom:0; left:-4px; right:-4px; height:4px;
+  background:#b89860; border-radius:2px;
+}
+
+.column-shaft {
+  width:28px; flex:1; min-height:200px;
+  background:repeating-linear-gradient(
+    120deg,
+    #e0d4b8 0px, #e0d4b8 4px,
+    #d4c8a0 4px, #d4c8a0 8px,
+    #c8b888 8px, #c8b888 12px,
+    #d4c8a0 12px, #d4c8a0 16px
   );
-  box-shadow:
-    inset 2px 0 8px rgba(180,165,140,0.15),
-    inset -2px 0 8px rgba(180,165,140,0.15);
-  z-index: 0;
+  box-shadow:inset 1px 0 4px rgba(255,255,240,0.2), inset -1px 0 4px rgba(80,60,20,0.15);
+  border-left:2px solid rgba(200,170,120,0.3);
+  border-right:2px solid rgba(200,170,120,0.3);
 }
 
-#pillar-left  { left: 6%; }
-#pillar-right { right: 6%; }
+.column-base {
+  width:40px; height:16px;
+  background:linear-gradient(180deg, #c8b080, #b89860);
+  border-radius:0 0 4px 4px;
+  box-shadow:0 2px 4px rgba(0,0,0,0.1);
+}
 
-/* --- Organ Facade (pipes area) --- */
-#organ-facade {
-  position: relative;
-  z-index: 3;
-  width: 88%;
-  max-width: 1000px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  margin-bottom: 6px;
+/* ================================================================
+   ORGAN CASEWORK — Grand Baroque case
+   ================================================================ */
+#organ-casework {
+  position:relative; z-index:3;
+  width:84%; max-width:1000px;
+  background:linear-gradient(180deg, #3a3028 0%, #2a221c 3%, #3a3028 97%, #2a221c 100%);
+  border:3px solid #b89860;
+  border-radius:6px;
+  box-shadow:
+    0 0 0 2px #5a4a38,
+    0 0 0 5px #c8a870,
+    0 6px 24px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,240,0.05);
+  margin:4px 0 2px;
+}
+
+/* Crown / pediment */
+#casework-crown {
+  display:flex; align-items:center; justify-content:center;
+  height:40px; position:relative;
+  margin:-3px -3px 0;
+  background:linear-gradient(180deg, #c8a870 0%, #d4b880 30%, #c0a068 100%);
+  border-radius:6px 6px 0 0;
+  border:2px solid #a08050;
+}
+
+#crown-crest {
+  height:24px; width:60%;
+  background:linear-gradient(180deg, #d4b880, #c8a870);
+  border-radius:50% 50% 0 0 / 80% 80% 0 0;
+  box-shadow:inset 0 2px 6px rgba(255,255,240,0.2);
+}
+
+.baroque-scroll {
+  width:44px; height:36px; position:absolute; top:2px;
+  background:radial-gradient(ellipse at 50% 30%, #d4b880 0%, #b89060 70%);
+  border-radius:50%;
+  box-shadow:0 2px 8px rgba(0,0,0,0.2);
+}
+.baroque-scroll::after {
+  content:''; position:absolute;
+  width:18px; height:18px; border-radius:50%;
+  background:radial-gradient(circle, #e8d0a0, #c8a070);
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  box-shadow:inset 0 1px 3px rgba(255,255,240,0.3);
+}
+#crown-scroll-left  { left:8%; }
+#crown-scroll-right { right:8%; }
+
+/* Pipe facade area */
+#pipes-facade {
+  padding:12px 16px 8px;
+  background:linear-gradient(180deg, rgba(0,0,0,0.2) 0%, transparent 10%, transparent 90%, rgba(0,0,0,0.2) 100%);
 }
 
 #pipes-container {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 4px;
-  padding: 0 8px;
+  display:flex; align-items:flex-end; justify-content:center; gap:4px;
 }
 
-/* --- Individual Pipe --- */
-.pipe {
-  border-radius: 3px 3px 5px 5px;
-  position: relative;
-  transition:
-    box-shadow 0.15s ease-out,
-    filter 0.15s ease-out,
-    background 0.3s ease;
-  cursor: default;
+/* Pipe groups — each division gets its own row of pipes */
+.pipe-group {
+  display:flex; align-items:flex-end; justify-content:center; gap:2px;
+  padding:0 4px;
+  position:relative;
+}
+.pipe-group::before {
+  content:attr(data-division);
+  position:absolute; bottom:-14px; left:50%; transform:translateX(-50%);
+  font-size:0.5rem; font-style:italic; color:#b0a080; text-transform:uppercase;
+  letter-spacing:0.05em; white-space:nowrap;
 }
 
-/* Pipe metallic gradient — copper / brass */
+.pipe-group--solo  { /* top row */ }
+.pipe-group--swell { /* 2nd row */ }
+.pipe-group--great { /* 3rd row */ }
+.pipe-group--choir { /* bottom row */ }
+
+/* Side ears / scrollwork */
+.casework-ear {
+  position:absolute; top:50px; width:36px; height:80px;
+  background:radial-gradient(ellipse at 50% 50%, #d4b880 0%, #b89060 80%);
+  border-radius:50%;
+  box-shadow:0 2px 10px rgba(0,0,0,0.2);
+  z-index:-1;
+}
+#casework-ear-left  { left:-22px; }
+#casework-ear-right { right:-22px; }
+
+/* ================================================================
+   PIPES — individual pipe styles (per division)
+   ================================================================ */
 .pipe {
-  background: linear-gradient(
-    90deg,
-    #b8944e 0%,
-    #d4b87a 15%,
-    #e8d5a3 35%,
-    #f0e2b8 50%,
-    #e8d5a3 65%,
-    #d4b87a 85%,
-    #b8944e 100%
-  );
+  border-radius:3px 3px 4px 4px;
+  position:relative;
+  transition:box-shadow 0.15s ease-out, filter 0.15s ease-out;
+  cursor:default;
+}
+
+/* Pipe metallic gradients — assigned inline by JS per division */
+.pipe {
   box-shadow:
-    inset 1px 0 3px rgba(255,255,240,0.3),
-    inset -1px 0 3px rgba(80,60,20,0.2),
-    0 2px 6px rgba(140,110,60,0.25);
+    inset 1px 0 3px rgba(255,255,240,0.25),
+    inset -1px 0 3px rgba(60,30,10,0.25),
+    0 2px 6px rgba(120,90,40,0.3);
 }
 
-/* Pipe mouth (labium) — subtle shadow line */
+/* Labium line */
 .pipe::after {
-  content: '';
-  position: absolute;
-  top: 22%;
-  left: 15%;
-  right: 15%;
-  height: 2px;
-  background: rgba(80,60,20,0.3);
-  border-radius: 1px;
-  box-shadow: 0 1px 1px rgba(255,255,240,0.2);
+  content:''; position:absolute; top:20%; left:12%; right:12%;
+  height:2px; background:rgba(60,30,10,0.35); border-radius:1px;
+  box-shadow:0 1px 1px rgba(255,255,240,0.2);
 }
 
-/* Pipe — active (playing) */
+/* Active pipe glow */
 .pipe.active {
   box-shadow:
-    inset 1px 0 3px rgba(255,255,240,0.5),
-    inset -1px 0 3px rgba(80,60,20,0.15),
-    0 0 24px 8px rgba(255,215,120,0.55),
-    0 0 48px 12px rgba(255,200,100,0.25);
-  filter: brightness(1.25);
+    inset 1px 0 3px rgba(255,255,240,0.45),
+    inset -1px 0 3px rgba(60,30,10,0.15),
+    0 0 20px 6px rgba(255,215,120,0.55),
+    0 0 40px 10px rgba(255,200,100,0.25) !important;
+  filter:brightness(1.3);
 }
 
-/* --- Note Labels --- */
-#note-labels {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  margin-bottom: 4px;
-  padding: 0 8px;
-  z-index: 3;
+/* ================================================================
+   STOP BOARD — Division labels
+   ================================================================ */
+#stop-board {
+  display:flex; align-items:center; justify-content:center; gap:12px;
+  z-index:3; margin-bottom:4px;
+  padding:4px 16px;
+  background:linear-gradient(180deg, #f5efe2, #ede4d0);
+  border:1px solid #d5c8a8;
+  border-radius:4px;
+  box-shadow:0 1px 4px rgba(0,0,0,0.06);
+  width:84%; max-width:1000px;
 }
 
-.note-label {
-  text-align: center;
-  font-size: 0.65rem;
-  font-weight: 500;
-  font-style: italic;
-  color: #8a8070;
-  letter-spacing: 0.02em;
-  transition: color 0.15s;
-  width: 32px;
+.stop-label {
+  font-size:0.6rem; font-weight:500; font-style:italic;
+  letter-spacing:0.03em; padding:2px 10px;
+  border-left:2px solid; border-radius:0 3px 3px 0;
+  white-space:nowrap;
+}
+.stop-solo  { color:#c9a040; border-color:#d4b060; }
+.stop-swell { color:#b89848; border-color:#c8a860; }
+.stop-great { color:#a08040; border-color:#b8944e; }
+.stop-choir { color:#8a6d38; border-color:#a08050; }
+
+/* ================================================================
+   KEYBOARD CONSOLE — Four manuals
+   ================================================================ */
+#keyboard-console {
+  width:84%; max-width:1000px;
+  background:linear-gradient(180deg, #3a3028, #2a221c);
+  border:2px solid #5a4a38;
+  border-radius:4px;
+  padding:6px 8px;
+  box-shadow:0 4px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,240,0.04);
+  z-index:4; position:relative;
 }
 
-.note-label.highlight {
-  color: #c9a040;
-  font-weight: 600;
+#keyboard-stack {
+  display:flex; flex-direction:column; gap:4px;
 }
 
-/* --- Keyboard --- */
-#keyboard-container {
-  position: relative;
-  z-index: 4;
-  margin-bottom: 10px;
+.keyboard-row {
+  display:flex; align-items:center; gap:4px;
+  padding:2px 0;
+  border-bottom:1px solid rgba(200,170,120,0.15);
+}
+.keyboard-row:last-child { border-bottom:none; }
+
+.keyboard-label {
+  width:50px; min-width:50px;
+  font-size:0.55rem; font-weight:600; font-style:italic;
+  text-align:right; padding-right:6px;
+  letter-spacing:0.04em; text-transform:uppercase;
+  white-space:nowrap;
+}
+.keyboard-row--solo  .keyboard-label { color:#e8d080; }
+.keyboard-row--swell .keyboard-label { color:#d4c080; }
+.keyboard-row--great .keyboard-label { color:#d4b87a; }
+.keyboard-row--choir .keyboard-label { color:#b89860; }
+
+.keyboard-keys {
+  display:flex; align-items:center; gap:2px; flex:1;
 }
 
-#keyboard {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  background: linear-gradient(180deg, #3a3530, #2a2520);
-  padding: 8px 12px;
-  border-radius: 8px;
-  box-shadow:
-    0 4px 16px rgba(0,0,0,0.25),
-    inset 0 1px 0 rgba(255,255,255,0.05);
-}
-
+/* ================================================================
+   KEYS — Individual key styles (per division)
+   ================================================================ */
 .key {
-  width: 36px;
-  height: 50px;
-  background: linear-gradient(180deg, #fefefe 0%, #f5f0e8 30%, #e8e0d4 100%);
-  border: none;
-  border-radius: 0 0 6px 6px;
-  cursor: pointer;
-  font-family: 'Cormorant Garamond', 'Times New Roman', Georgia, serif;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #5a5040;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  box-shadow:
-    0 3px 6px rgba(0,0,0,0.2),
-    0 1px 2px rgba(0,0,0,0.1),
-    inset 0 1px 0 rgba(255,255,255,0.8);
-  transition:
-    background 0.1s ease,
-    box-shadow 0.1s ease,
-    transform 0.08s ease,
-    color 0.1s;
-  outline: none;
-  -webkit-tap-highlight-color: transparent;
+  height:38px; border:none; border-radius:0 0 4px 4px;
+  cursor:pointer;
+  font-family:'Cormorant Garamond','Times New Roman',Georgia,serif;
+  font-size:0.65rem; font-weight:600;
+  text-transform:uppercase; letter-spacing:0.03em;
+  outline:none; -webkit-tap-highlight-color:transparent;
+  transition:background 0.1s, box-shadow 0.1s, transform 0.08s, color 0.1s;
+  display:flex; align-items:flex-end; justify-content:center;
+  padding-bottom:4px;
 }
 
-.key:hover {
-  background: linear-gradient(180deg, #fffefb 0%, #faf5ec 30%, #efe8d8 100%);
+/* Key widths per division (more keys → narrower) */
+.keyboard-row--solo  .key { width:30px; }
+.keyboard-row--swell .key { width:34px; }
+.keyboard-row--great .key { width:32px; }
+.keyboard-row--choir .key { width:36px; }
+
+/* Key colours per division */
+.key--solo {
+  background:linear-gradient(180deg, #fefdf8 0%, #faf5e8 35%, #f0e8d0 100%);
+  color:#8a7020; box-shadow:0 2px 4px rgba(0,0,0,0.15), 0 0 6px rgba(200,170,80,0.1), inset 0 1px 0 rgba(255,255,255,0.7);
+}
+.key--swell {
+  background:linear-gradient(180deg, #fefdf8 0%, #f8f2e4 35%, #ebe0cc 100%);
+  color:#7a6828; box-shadow:0 2px 4px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.7);
+}
+.key--great {
+  background:linear-gradient(180deg, #fefefe 0%, #f5f0e8 35%, #e8e0d4 100%);
+  color:#5a5040; box-shadow:0 3px 5px rgba(0,0,0,0.18), 0 1px 2px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8);
+}
+.key--choir {
+  background:linear-gradient(180deg, #fdfcf8 0%, #f2ece0 35%, #e4dcd0 100%);
+  color:#6a5a38; box-shadow:0 2px 4px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.65);
 }
 
-.key:active,
+/* Key hover */
+.key:hover { filter:brightness(1.04); }
+
+/* Key active (pressed) */
 .key.active {
-  background: linear-gradient(180deg, #f5e6c8 0%, #e8d5a3 50%, #d4c080 100%);
-  color: #8a6d20;
-  box-shadow:
-    0 1px 3px rgba(0,0,0,0.2),
-    inset 0 2px 4px rgba(0,0,0,0.12),
-    0 0 16px 4px rgba(255,215,120,0.35);
-  transform: translateY(2px);
+  transform:translateY(2px);
+}
+.key--solo.active {
+  background:linear-gradient(180deg, #f5e6c0, #e8d090, #d4b860);
+  color:#6a5010; box-shadow:0 1px 2px rgba(0,0,0,0.2), inset 0 2px 4px rgba(0,0,0,0.1), 0 0 14px 3px rgba(255,210,100,0.4);
+}
+.key--swell.active {
+  background:linear-gradient(180deg, #f5e6c0, #e8d5a0, #d4c080);
+  color:#6a5010; box-shadow:0 1px 2px rgba(0,0,0,0.2), inset 0 2px 4px rgba(0,0,0,0.1), 0 0 12px 3px rgba(255,210,100,0.35);
+}
+.key--great.active {
+  background:linear-gradient(180deg, #f5e6c8, #e8d5a3, #d4c080);
+  color:#8a6d20; box-shadow:0 1px 2px rgba(0,0,0,0.2), inset 0 2px 4px rgba(0,0,0,0.12), 0 0 14px 3px rgba(255,210,100,0.35);
+}
+.key--choir.active {
+  background:linear-gradient(180deg, #f2e2c0, #e4d0a0, #ccb880);
+  color:#6a5010; box-shadow:0 1px 2px rgba(0,0,0,0.2), inset 0 2px 4px rgba(0,0,0,0.1), 0 0 10px 3px rgba(255,200,90,0.3);
 }
 
-/* --- Controls --- */
-#controls {
-  z-index: 5;
-  margin-bottom: 6px;
+/* ================================================================
+   CONSOLE BASE
+   ================================================================ */
+#console-base {
+  width:80%; max-width:960px; height:16px;
+  background:linear-gradient(180deg, #5a4a38, #3a3028);
+  border-radius:0 0 4px 4px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.3);
+  z-index:4; margin-bottom:8px;
 }
+#base-moulding {
+  height:6px;
+  background:linear-gradient(180deg, #8a7050, #6a5038);
+  border-radius:0 0 3px 3px;
+}
+
+/* ================================================================
+   CONTROLS & HINT
+   ================================================================ */
+#controls { z-index:5; margin-bottom:4px; }
 
 #tremulant-btn {
-  background: linear-gradient(180deg, #fefdfb, #f2ece0);
-  border: 1px solid #d5cfc4;
-  border-radius: 20px;
-  padding: 6px 20px;
-  font-family: 'Cormorant Garamond', 'Times New Roman', Georgia, serif;
-  font-size: 0.85rem;
-  font-style: italic;
-  color: #6a6048;
-  cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  background:linear-gradient(180deg, #fefdfb, #f2ece0);
+  border:1px solid #c8b898; border-radius:18px;
+  padding:5px 18px;
+  font-family:'Cormorant Garamond','Times New Roman',Georgia,serif;
+  font-size:0.8rem; font-style:italic; color:#6a6048;
+  cursor:pointer; transition:all 0.2s;
+  box-shadow:0 1px 3px rgba(0,0,0,0.08);
 }
-
-#tremulant-btn:hover {
-  background: linear-gradient(180deg, #f0e8d8, #e8dcc8);
-  color: #8a6d20;
-}
-
+#tremulant-btn:hover { background:linear-gradient(180deg, #f0e8d8, #e8dcc8); color:#8a6d20; }
 #tremulant-btn.active {
-  background: linear-gradient(180deg, #f5e6c8, #e8d5a3);
-  color: #8a6d20;
-  border-color: #c9a040;
-  box-shadow: 0 0 10px rgba(200,170,80,0.25);
+  background:linear-gradient(180deg, #f5e6c8, #e8d5a3); color:#8a6d20;
+  border-color:#c9a040; box-shadow:0 0 10px rgba(200,170,80,0.25);
 }
 
-/* --- Hint --- */
 #hint {
-  z-index: 5;
-  font-size: 0.8rem;
-  font-style: italic;
-  color: #b0a590;
-  letter-spacing: 0.03em;
-  margin-bottom: 12px;
+  z-index:5; font-size:0.7rem; font-style:italic;
+  color:#b0a590; letter-spacing:0.03em; margin-bottom:10px;
 }
 
-/* --- Responsive --- */
-@media (max-width: 900px) {
-  .key { width: 28px; height: 42px; font-size: 0.7rem; }
-  .note-label { font-size: 0.55rem; width: 28px; }
-  .pipe { border-radius: 2px 2px 4px 4px; }
-  #pipes-container { gap: 2px; }
-  #keyboard { gap: 2px; padding: 6px 8px; }
-  #rose-window { width: 120px; height: 120px; }
-  #rose-center { width: 24px; height: 24px; }
-  #dome { height: 80px; }
-  .pillar { width: 24px; }
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+@media (max-width:1000px) {
+  #dome { height:100px; }
+  .keyboard-row--solo  .key { width:24px; font-size:0.55rem; }
+  .keyboard-row--swell .key { width:28px; font-size:0.55rem; }
+  .keyboard-row--great .key { width:26px; font-size:0.55rem; }
+  .keyboard-row--choir .key { width:30px; font-size:0.55rem; }
+  .key { height:32px; }
+  .keyboard-label { width:40px; min-width:40px; font-size:0.5rem; }
+  #rose-window { width:120px; height:120px; }
+  #rose-center { width:22px; height:22px; }
+  .side-arch { width:50px; height:100px; }
+  .spiral-column { width:24px; }
+  .column-shaft { width:18px; }
+  .column-capital { width:32px; height:16px; }
+  .column-base { width:28px; height:12px; }
+  #stop-board { gap:6px; }
+  .stop-label { font-size:0.5rem; padding:1px 6px; }
 }
 
-@media (max-width: 600px) {
-  .key { width: 20px; height: 36px; font-size: 0.6rem; border-radius: 0 0 4px 4px; }
-  .note-label { font-size: 0.45rem; width: 20px; }
-  .pipe { border-radius: 1px 1px 3px 3px; }
-  #pipes-container { gap: 1px; }
-  #keyboard { gap: 1px; padding: 4px 5px; }
-  #note-labels { gap: 1px; }
-  #rose-window { width: 80px; height: 80px; }
-  #rose-center { width: 18px; height: 18px; }
-  #dome { height: 50px; }
-  .pillar { width: 14px; top: 60px; bottom: 130px; }
+@media (max-width:700px) {
+  #dome { height:70px; }
+  .keyboard-row--solo  .key { width:18px; height:26px; font-size:0.45rem; }
+  .keyboard-row--swell .key { width:20px; height:26px; font-size:0.45rem; }
+  .keyboard-row--great .key { width:18px; height:26px; font-size:0.45rem; }
+  .keyboard-row--choir .key { width:22px; height:26px; font-size:0.45rem; }
+  .keyboard-label { width:30px; min-width:30px; font-size:0.4rem; }
+  #rose-window { width:80px; height:80px; }
+  #rose-center { width:16px; height:16px; }
+  .side-arch { width:30px; height:60px; }
+  .spiral-column { display:none; }
+  #stop-board { flex-wrap:wrap; gap:4px; padding:2px 8px; }
+  .stop-label { font-size:0.45rem; }
+  #casework-crown { height:26px; }
+  .baroque-scroll { width:28px; height:24px; }
+  #pipes-container { gap:2px; }
+  .pipe-group { gap:1px; }
 }

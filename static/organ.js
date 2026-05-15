@@ -1,6 +1,7 @@
 /* ================================================================
-   Pipe Organ Engine — Web Audio API organ tone synthesis
-   Multi-harmonic additive synthesis with detune, chiff, and tremulant.
+   Pipe Organ Engine — Multi-division organ tone synthesis
+   Four divisions: Great, Swell, Choir, Solo — each with distinct
+   harmonic recipes. Global tremulant with division-aware routing.
    ================================================================ */
 
 class PipeOrganEngine {
@@ -8,32 +9,78 @@ class PipeOrganEngine {
     /** @type {AudioContext|null} */
     this.ctx = null;
 
-    /** Master gain for overall volume */
+    /** Master gain */
     this.masterGain = null;
 
-    /** Tremulant LFO */
+    /** Tremulant chain */
     this.tremulantGain = null;
     this.tremulantLFO = null;
+    this.tremulantLfoGain = null;
     this.tremulantActive = false;
 
-    /** Active voices: Map<frequency_Hz, { oscillators, gains, masterGain, noiseNode, noiseGain }> */
+    /** Dry path — voices bypass tremulant when off */
+    this.dryGain = null;
+
+    /** Active voices: Map<freqKey, { ... }> */
     this.activeVoices = new Map();
 
-    /** Chiff noise buffer (reused) */
+    /** Chiff noise buffer (shared) */
     this.noiseBuffer = null;
 
-    /** Attack / release times in seconds */
+    /** Attack / release (seconds) */
     this.attackTime = 0.03;
     this.releaseTime = 0.12;
 
-    /** Overall volume (0–1) */
+    /** Master volume 0–1 */
     this.volume = 0.7;
   }
 
-  /**
-   * Initialise the AudioContext and master chain.
-   * Must be called after a user gesture.
-   */
+  /* ------------------------------------------------------------------
+   * Harmonic recipes per division
+   * [multiplier, relativeGain, detuneCents]
+   * ------------------------------------------------------------------ */
+  _getHarmonics(division) {
+    switch (division) {
+      case 'choir':
+        // Dulciana — gentle, few harmonics
+        return [
+          [1.0,  0.55,  0],
+          [2.0,  0.20,  2],
+        ];
+      case 'great':
+        // Principal chorus — full, rich
+        return [
+          [1.0,  0.70,  0],
+          [2.0,  0.45,  2],
+          [3.0,  0.30, -3],
+          [4.0,  0.20,  4],
+          [5.0,  0.10,  5],
+          [6.0,  0.05, -5],
+        ];
+      case 'swell':
+        // Flute — mellow, lighter upper harmonics
+        return [
+          [1.0,  0.60,  0],
+          [2.0,  0.25,  1],
+          [3.0,  0.10, -2],
+        ];
+      case 'solo':
+        // Trompette / reed — bright, incisive
+        return [
+          [1.0,  0.65,  0],
+          [2.0,  0.50,  2],
+          [3.0,  0.35, -3],
+          [4.0,  0.25,  4],
+          [5.0,  0.18,  5],
+          [6.0,  0.12, -5],
+          [8.0,  0.06,  2],
+        ];
+      default:
+        return [[1.0, 0.70, 0]];
+    }
+  }
+
+  /* ---- Initialisation ---- */
   async init() {
     if (this.ctx) return;
 
@@ -44,176 +91,149 @@ class PipeOrganEngine {
     this.masterGain.gain.value = this.volume;
     this.masterGain.connect(this.ctx.destination);
 
-    // Tremulant gain node (sits between voices and master)
+    // Dry gain (always on)
+    this.dryGain = this.ctx.createGain();
+    this.dryGain.gain.value = 1.0;
+    this.dryGain.connect(this.masterGain);
+
+    // Tremulant gain (parallel wet path)
     this.tremulantGain = this.ctx.createGain();
-    this.tremulantGain.gain.value = 1.0;
+    this.tremulantGain.gain.value = 0; // off by default
     this.tremulantGain.connect(this.masterGain);
 
-    // Build shared noise buffer for chiff
     this._buildNoiseBuffer();
 
-    // Warm up — resume if suspended
     if (this.ctx.state === 'suspended') {
       await this.ctx.resume();
     }
   }
 
-  /**
-   * Build a short buffer of white noise for the chiff effect.
-   */
   _buildNoiseBuffer() {
-    const length = this.ctx.sampleRate * 0.04; // 40 ms
-    this.noiseBuffer = this.ctx.createBuffer(1, length, this.ctx.sampleRate);
-    const data = this.noiseBuffer.getChannelData(0);
-    for (let i = 0; i < length; i++) {
-      data[i] = (Math.random() * 2 - 1) * 0.3;
-    }
+    const len = Math.floor(this.ctx.sampleRate * 0.04);
+    this.noiseBuffer = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
+    const d = this.noiseBuffer.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * 0.3;
   }
 
+  /* ---- Note on ---- */
   /**
-   * Start a note at the given frequency.
-   * @param {number} freq - Frequency in Hz
+   * @param {number}  freq      Frequency in Hz
+   * @param {string}  division  'choir'|'great'|'swell'|'solo'
    */
-  noteOn(freq) {
+  noteOn(freq, division = 'great') {
     if (!this.ctx) return;
-    if (this.activeVoices.has(freq)) return; // already playing
+    const key = freq + '|' + division;
+    if (this.activeVoices.has(key)) return;
 
     const now = this.ctx.currentTime;
-
-    // --- Harmonic recipe (pipe organ stop mixture) ---
-    // [multiplier, gain, detuneCents]
-    const harmonics = [
-      [1.0,  0.70,  0],     // Principal 8'
-      [2.0,  0.45,  2],     // Octave 4'
-      [3.0,  0.30, -3],     // Twelfth 2-2/3'
-      [4.0,  0.20,  4],     // Fifteenth 2'
-      [5.0,  0.10,  5],     // Seventeenth (mixture)
-      [6.0,  0.05, -5],     // Nineteenth (mixture)
-    ];
+    const harmonics = this._getHarmonics(division);
 
     const oscillators = [];
-    const gains = [];
+    const oscGains = [];
 
-    // Per-note gain node (for local attack/release)
+    // Per-note local gain (attack/release envelope)
     const noteGain = this.ctx.createGain();
     noteGain.gain.setValueAtTime(0, now);
     noteGain.gain.linearRampToValueAtTime(0.85, now + this.attackTime);
 
-    for (const [mult, gainVal, detuneCents] of harmonics) {
+    for (const [mult, gainVal, detune] of harmonics) {
       const osc = this.ctx.createOscillator();
-      const oscGain = this.ctx.createGain();
+      const g = this.ctx.createGain();
 
       osc.type = 'sine';
       osc.frequency.value = freq * mult;
-      osc.detune.value = detuneCents;
+      osc.detune.value = detune;
+      g.gain.value = gainVal;
 
-      oscGain.gain.value = gainVal;
-
-      osc.connect(oscGain);
-      oscGain.connect(noteGain);
+      osc.connect(g);
+      g.connect(noteGain);
       osc.start(now);
 
       oscillators.push(osc);
-      gains.push(oscGain);
+      oscGains.push(g);
     }
 
-    // Connect note gain into tremulant chain
+    // Connect note into both dry and tremulant paths
+    noteGain.connect(this.dryGain);
     noteGain.connect(this.tremulantGain);
 
-    // --- Chiff (breath noise burst) ---
+    // Chiff
     const noiseNode = this.ctx.createBufferSource();
     noiseNode.buffer = this.noiseBuffer;
-
     const noiseGain = this.ctx.createGain();
     noiseGain.gain.setValueAtTime(0.08, now);
     noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
-
-    const noiseFilter = this.ctx.createBiquadFilter();
-    noiseFilter.type = 'highpass';
-    noiseFilter.frequency.value = 800;
-
-    noiseNode.connect(noiseFilter);
-    noiseFilter.connect(noiseGain);
-    noiseGain.connect(this.tremulantGain);
+    const noiseFilt = this.ctx.createBiquadFilter();
+    noiseFilt.type = 'highpass';
+    noiseFilt.frequency.value = 800;
+    noiseNode.connect(noiseFilt);
+    noiseFilt.connect(noiseGain);
+    noiseGain.connect(this.dryGain);
     noiseNode.start(now);
     noiseNode.stop(now + 0.04);
 
-    this.activeVoices.set(freq, {
+    this.activeVoices.set(key, {
       oscillators,
-      gains,
       noteGain,
       noiseNode,
       noiseGain,
     });
   }
 
-  /**
-   * Stop a note at the given frequency.
-   * @param {number} freq - Frequency in Hz
-   */
-  noteOff(freq) {
+  /* ---- Note off ---- */
+  noteOff(freq, division = 'great') {
     if (!this.ctx) return;
-
-    const voice = this.activeVoices.get(freq);
+    const key = freq + '|' + division;
+    const voice = this.activeVoices.get(key);
     if (!voice) return;
 
     const now = this.ctx.currentTime;
-    const releaseEnd = now + this.releaseTime;
+    const end = now + this.releaseTime;
 
-    // Smooth release
     voice.noteGain.gain.setValueAtTime(voice.noteGain.gain.value, now);
-    voice.noteGain.gain.linearRampToValueAtTime(0, releaseEnd);
+    voice.noteGain.gain.linearRampToValueAtTime(0, end);
 
-    // Schedule cleanup
-    const oscillators = voice.oscillators;
+    const oscs = voice.oscillators;
     setTimeout(() => {
-      for (const osc of oscillators) {
-        try { osc.stop(); } catch (_) { /* already stopped */ }
-      }
-    }, this.releaseTime * 1000 + 50);
+      for (const o of oscs) { try { o.stop(); } catch (_) {} }
+    }, this.releaseTime * 1000 + 60);
 
-    this.activeVoices.delete(freq);
+    this.activeVoices.delete(key);
   }
 
-  /**
-   * Toggle the tremulant (amplitude modulation).
-   */
+  /* ---- Tremulant ---- */
   toggleTremulant() {
-    if (!this.ctx) return;
-
+    if (!this.ctx) return false;
     this.tremulantActive = !this.tremulantActive;
 
     if (this.tremulantActive) {
-      // Create LFO modulating tremulantGain
+      this.tremulantGain.gain.value = 0.7; // wet mix
+
       this.tremulantLFO = this.ctx.createOscillator();
-      const lfoGain = this.ctx.createGain();
+      this.tremulantLfoGain = this.ctx.createGain();
 
       this.tremulantLFO.type = 'sine';
-      this.tremulantLFO.frequency.value = 5.5; // typical organ tremulant rate
-      lfoGain.gain.value = 0.08; // ±8% depth
+      this.tremulantLFO.frequency.value = 5.5;
+      this.tremulantLfoGain.gain.value = 0.10; // ±10 %
 
-      this.tremulantLFO.connect(lfoGain);
-      lfoGain.connect(this.tremulantGain.gain);
+      this.tremulantLFO.connect(this.tremulantLfoGain);
+      this.tremulantLfoGain.connect(this.tremulantGain.gain);
       this.tremulantLFO.start();
     } else {
       if (this.tremulantLFO) {
         try { this.tremulantLFO.stop(); } catch (_) {}
         this.tremulantLFO = null;
+        this.tremulantLfoGain = null;
       }
-      this.tremulantGain.gain.value = 1.0;
+      this.tremulantGain.gain.value = 0;
     }
 
     return this.tremulantActive;
   }
 
-  /**
-   * Set master volume.
-   * @param {number} v - 0..1
-   */
+  /* ---- Master volume ---- */
   setVolume(v) {
     this.volume = Math.max(0, Math.min(1, v));
-    if (this.masterGain) {
-      this.masterGain.gain.value = this.volume;
-    }
+    if (this.masterGain) this.masterGain.gain.value = this.volume;
   }
 }
