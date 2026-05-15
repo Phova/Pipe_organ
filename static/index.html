@@ -11,21 +11,51 @@
 </head>
 <body>
 
+  <!-- ============================================================ -->
+  <!--  Damask wallpaper overlay (subtle, fixed)                     -->
+  <!-- ============================================================ -->
+  <div id="damask-overlay"></div>
+
+  <!-- ============================================================ -->
+  <!--  Flying buttresses (outside main flow, decorative)            -->
+  <!-- ============================================================ -->
+  <div id="flying-buttress-left" class="flying-buttress">
+    <div class="buttress-pier"></div>
+    <div class="buttress-arch"></div>
+  </div>
+  <div id="flying-buttress-right" class="flying-buttress">
+    <div class="buttress-pier"></div>
+    <div class="buttress-arch"></div>
+  </div>
+
   <div id="cathedral">
 
     <!-- ============================================================ -->
-    <!--  Dome with coffered ceiling                                  -->
+    <!--  Dome with coffered ceiling + lantern                        -->
     <!-- ============================================================ -->
     <div id="dome-area">
+      <div id="dome-lantern">
+        <div id="lantern-base"></div>
+        <div id="lantern-dome"></div>
+        <div id="lantern-cross"></div>
+      </div>
       <div id="dome">
         <div id="dome-coffers"></div>
         <div id="dome-ribs"></div>
         <div id="dome-oculus"></div>
+        <div id="dome-glow"></div>
       </div>
     </div>
 
     <!-- ============================================================ -->
-    <!--  Cornice / entablature                                       -->
+    <!--  Latin inscription frieze                                    -->
+    <!-- ============================================================ -->
+    <div id="frieze-latin">
+      <span class="latin-text">S O L I&ensp;&middot;&ensp;D E O&ensp;&middot;&ensp;G L O R I A</span>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  Cornice / entablature (upper)                               -->
     <!-- ============================================================ -->
     <div id="cornice-upper" class="cornice">
       <div class="cornice-moulding c1"></div>
@@ -35,17 +65,24 @@
     </div>
 
     <!-- ============================================================ -->
-    <!--  Rose window + flanking arches                               -->
+    <!--  Rose window + flanking arches + spandrels                   -->
     <!-- ============================================================ -->
     <div id="clerestory">
+      <div id="spandrel-left" class="spandrel">
+        <div class="spandrel-quatrefoil"></div>
+      </div>
       <div id="arch-left" class="side-arch"></div>
       <div id="rose-window-container">
         <div id="rose-window">
           <div id="rose-center"></div>
         </div>
         <div id="rose-frame"></div>
+        <div id="rose-glow"></div>
       </div>
       <div id="arch-right" class="side-arch"></div>
+      <div id="spandrel-right" class="spandrel">
+        <div class="spandrel-quatrefoil"></div>
+      </div>
     </div>
 
     <!-- ============================================================ -->
@@ -54,20 +91,63 @@
     <div id="cornice-lower" class="cornice">
       <div class="cornice-dentils"></div>
       <div class="cornice-moulding c2"></div>
+      <div class="cornice-moulding c1"></div>
     </div>
 
     <!-- ============================================================ -->
-    <!--  Spiral columns (flanking the organ case)                    -->
+    <!--  Inner Corinthian pilasters (flanking the organ case)        -->
+    <!-- ============================================================ -->
+    <div id="pilaster-left" class="corinthian-pilaster">
+      <div class="pilaster-capital">
+        <div class="pilaster-acanthus"></div>
+      </div>
+      <div class="pilaster-shaft"></div>
+      <div class="pilaster-base"></div>
+    </div>
+    <div id="pilaster-right" class="corinthian-pilaster">
+      <div class="pilaster-capital">
+        <div class="pilaster-acanthus"></div>
+      </div>
+      <div class="pilaster-shaft"></div>
+      <div class="pilaster-base"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  Spiral columns (outer Solomonic columns)                    -->
     <!-- ============================================================ -->
     <div id="column-left" class="spiral-column">
       <div class="column-capital"></div>
       <div class="column-shaft"></div>
       <div class="column-base"></div>
+      <div id="sconce-left" class="sconce">
+        <div class="sconce-bracket"></div>
+        <div class="sconce-flame"></div>
+        <div class="sconce-glow"></div>
+      </div>
     </div>
     <div id="column-right" class="spiral-column">
       <div class="column-capital"></div>
       <div class="column-shaft"></div>
       <div class="column-base"></div>
+      <div id="sconce-right" class="sconce">
+        <div class="sconce-bracket"></div>
+        <div class="sconce-flame"></div>
+        <div class="sconce-glow"></div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  Side blind arcades                                          -->
+    <!-- ============================================================ -->
+    <div id="side-arcade-left" class="side-arcade">
+      <div class="arcade-arch"></div>
+      <div class="arcade-arch"></div>
+      <div class="arcade-arch"></div>
+    </div>
+    <div id="side-arcade-right" class="side-arcade">
+      <div class="arcade-arch"></div>
+      <div class="arcade-arch"></div>
+      <div class="arcade-arch"></div>
     </div>
 
     <!-- ============================================================ -->
@@ -81,7 +161,25 @@
         <div id="crown-scroll-right" class="baroque-scroll"></div>
       </div>
 
-      <!-- Pipe facade (4 groups generated by JS) -->
+      <!-- Tympanum — triangular pediment with cartouche -->
+      <div id="tympanum">
+        <div id="tympanum-inner">
+          <div id="cartouche">
+            <div id="cartouche-scroll-tl" class="cartouche-scroll"></div>
+            <div id="cartouche-scroll-tr" class="cartouche-scroll"></div>
+            <div id="cartouche-body">
+              <span class="cartouche-text">GLORIA IN EXCELSIS</span>
+            </div>
+            <div id="cartouche-scroll-bl" class="cartouche-scroll"></div>
+            <div id="cartouche-scroll-br" class="cartouche-scroll"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Acanthus leaf frieze (above pipes) -->
+      <div id="acanthus-frieze-upper" class="acanthus-frieze"></div>
+
+      <!-- Pipe facade -->
       <div id="pipes-facade">
         <div id="pipes-container">
           <!-- JS fills .pipe-group × 4 -->
@@ -91,6 +189,20 @@
       <!-- Side scrolls / ears -->
       <div id="casework-ear-left" class="casework-ear"></div>
       <div id="casework-ear-right" class="casework-ear"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  Festoon / swag garlands between columns                     -->
+    <!-- ============================================================ -->
+    <div id="festoon-area">
+      <div id="festoon-left" class="festoon">
+        <div class="festoon-swag"></div>
+        <div class="festoon-rosette"></div>
+      </div>
+      <div id="festoon-right" class="festoon">
+        <div class="festoon-swag"></div>
+        <div class="festoon-rosette"></div>
+      </div>
     </div>
 
     <!-- ============================================================ -->
@@ -104,12 +216,36 @@
     </div>
 
     <!-- ============================================================ -->
-    <!--  Keyboard stack (4 manuals, generated by JS)                 -->
+    <!--  Keyboard console with music rack and cheeks                 -->
     <!-- ============================================================ -->
     <div id="keyboard-console">
+      <!-- Music rack (above keyboards) -->
+      <div id="music-rack">
+        <div id="music-rack-frame">
+          <div class="rack-ornament rack-orn-l"></div>
+          <div class="rack-ornament rack-orn-r"></div>
+          <div id="music-shelf"></div>
+        </div>
+      </div>
+      <!-- Keyboard stack -->
       <div id="keyboard-stack">
         <!-- JS fills .keyboard-row × 4 -->
       </div>
+      <!-- Console cheeks (end blocks) -->
+      <div id="console-cheek-left" class="console-cheek">
+        <div class="cheek-scroll"></div>
+      </div>
+      <div id="console-cheek-right" class="console-cheek">
+        <div class="cheek-scroll"></div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  Egg-and-dart moulding band                                  -->
+    <!-- ============================================================ -->
+    <div id="egg-dart-band">
+      <div class="egg-dart-pattern"></div>
+      <div class="egg-dart-line"></div>
     </div>
 
     <!-- ============================================================ -->
@@ -124,8 +260,9 @@
     <!-- ============================================================ -->
     <div id="controls">
       <button id="tremulant-btn" title="Toggle Tremulant">Tremulant: Off</button>
+      <span id="voice-count" class="voice-indicator"></span>
     </div>
-    <div id="hint">Press keys A&ndash;Z, 1&ndash;9, 0, -, =, ;, ', ,, ., / to play</div>
+    <div id="hint">Press keys A&ndash;Z, 1&ndash;9, 0, -, =, ;, &rsquo;, ,, ., / to play</div>
 
   </div>
 

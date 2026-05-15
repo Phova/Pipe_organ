@@ -83,6 +83,7 @@
   const pipesContainer = document.getElementById('pipes-container');
   const keyboardStack = document.getElementById('keyboard-stack');
   const tremulantBtn = document.getElementById('tremulant-btn');
+  const voiceCountEl = document.getElementById('voice-count');
 
   /** Map: keyChar → { pipeEl, keyEl } */
   const elements = {};
@@ -146,8 +147,10 @@
         keyEl.dataset.key = keyChar;
         keyEl.dataset.freq = info.freq;
         keyEl.dataset.division = divName;
-        keyEl.textContent = keyChar;
-        keyEl.title = info.label + ' (' + div.label + ')';
+        // Dual label: note name primary, keyboard char secondary
+        keyEl.innerHTML = '<span class="key-note">' + info.label + '</span>' +
+                          '<span class="key-hint">' + keyChar + '</span>';
+        keyEl.title = info.label + ' &mdash; ' + div.label + ' [' + keyChar + ']';
 
         // Mouse
         keyEl.addEventListener('mousedown', (e) => { e.preventDefault(); press(keyChar); });
@@ -200,6 +203,7 @@
     held.add(keyChar);
     await ensureOrgan();
     organ.noteOn(info.freq, info.division);
+    updateVoiceCount();
 
     const els = elements[keyChar];
     if (els) {
@@ -215,6 +219,7 @@
     const info = KEY_MAP[keyChar];
     if (!info || !organ) return;
     organ.noteOff(info.freq, info.division);
+    updateVoiceCount();
 
     const els = elements[keyChar];
     if (els) {
@@ -226,6 +231,12 @@
   function releaseAll() {
     for (const k of held) release(k);
     held.clear();
+  }
+
+  function updateVoiceCount() {
+    if (!voiceCountEl || !organ) return;
+    const n = organ.activeVoiceCount;
+    voiceCountEl.textContent = n > 0 ? 'Voices: ' + n : '';
   }
 
   // ------------------------------------------------------------------
