@@ -66,9 +66,9 @@ html, body {
 /* ================================================================
    DOME — Coffered ceiling, full-width
    ================================================================ */
-#dome-area { width:100%; position:relative; z-index:1; margin-top:4px; }
+#dome-area { width:100%; position:relative; z-index:1; margin-top:2px; }
 #dome {
-  width:100%; height:160px; position:relative;
+  width:100%; height:110px; position:relative;
   background:radial-gradient(ellipse at 50% 100%, rgba(245,240,228,0.96) 0%, rgba(235,226,205,0.68) 45%, rgba(218,208,185,0.38) 100%);
   border-radius:50% 50% 0 0 / 100% 100% 0 0;
   box-shadow:inset 0 12px 50px rgba(190,165,135,0.22),inset 0 3px 10px rgba(210,190,160,0.12),0 5px 24px rgba(160,140,110,0.15);
@@ -95,8 +95,8 @@ html, body {
   border-radius:50% 50% 0 0 / 100% 100% 0 0;
 }
 #dome-oculus {
-  position:absolute; top:6px; left:50%; transform:translateX(-50%);
-  width:56px; height:56px; border-radius:50%;
+  position:absolute; top:4px; left:50%; transform:translateX(-50%);
+  width:44px; height:44px; border-radius:50%;
   background:radial-gradient(circle at 42% 38%, #fefdfc 0%, #f2ebd8 33%, #e0d4b8 68%, #d2c2a0 100%);
   box-shadow:0 0 50px rgba(255,252,245,0.75),0 0 90px rgba(248,242,228,0.35),inset 0 0 18px rgba(200,180,140,0.40);
   z-index:2;
@@ -108,16 +108,16 @@ html, body {
 
 /* Dome lantern */
 #dome-lantern {
-  position:absolute; top:-48px; left:50%; transform:translateX(-50%);
+  position:absolute; top:-38px; left:50%; transform:translateX(-50%);
   display:flex; flex-direction:column; align-items:center; z-index:3;
 }
 #lantern-base {
-  width:34px; height:15px;
+  width:28px; height:12px;
   background:linear-gradient(180deg, #e2d6b2, #d6c490, #c8b472);
   border-radius:2px 2px 0 0; box-shadow:0 1px 4px rgba(0,0,0,0.16);
 }
 #lantern-dome {
-  width:30px; height:24px;
+  width:24px; height:20px;
   background:radial-gradient(ellipse at 50% 0%, #fefdfa 0%, #eadebc 55%, #d6c490 100%);
   border-radius:50% 50% 30% 30% / 60% 60% 10% 10%;
   box-shadow:0 2px 10px rgba(0,0,0,0.14),inset 0 2px 5px rgba(255,255,240,0.45);
@@ -345,7 +345,7 @@ html, body {
    ================================================================ */
 .pipe-case {
   display:flex; align-items:stretch;
-  flex:1; min-height:280px;
+  flex:1; min-height:180px;
   position:relative; z-index:2;
 }
 
@@ -396,31 +396,35 @@ html, body {
   box-shadow:0 1px 3px rgba(0,0,0,0.15);
 }
 
-/* Dark recessed pipe case interior */
+/* Warm recessed pipe case interior (dark wood, not black) */
 .pipe-case-interior {
   flex:1; display:flex; flex-direction:column;
   position:relative; z-index:1;
-  /* Deep shadow simulating the wind-chest cavity */
   background:linear-gradient(180deg,
-    #1a1814 0%, #262218 8%, #2e2a1e 25%, #222018 70%, #120f0a 100%);
-  border-left:1px solid #3a3020;
-  border-right:1px solid #3a3020;
+    #3a2e1c 0%, #4a3a26 12%, #3e3020 50%, #2c2014 100%);
+  border-left:1px solid #5a4a30;
+  border-right:1px solid #5a4a30;
   overflow:hidden;
 }
 .pipe-case-shadow {
   position:absolute; inset:0; pointer-events:none; z-index:0;
   background:
-    radial-gradient(ellipse at 50% 30%, rgba(40,30,15,0.6) 0%, transparent 60%),
-    radial-gradient(ellipse at 20% 50%, rgba(20,10,5,0.5) 0%, transparent 40%),
-    radial-gradient(ellipse at 80% 50%, rgba(20,10,5,0.5) 0%, transparent 40%),
-    linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 8%, transparent 92%, rgba(0,0,0,0.5) 100%);
+    radial-gradient(ellipse at 50% 30%, rgba(40,28,10,0.45) 0%, transparent 60%),
+    radial-gradient(ellipse at 20% 50%, rgba(30,20,8,0.35) 0%, transparent 40%),
+    radial-gradient(ellipse at 80% 50%, rgba(30,20,8,0.35) 0%, transparent 40%),
+    linear-gradient(180deg, rgba(20,12,4,0.55) 0%, transparent 8%, transparent 92%, rgba(20,12,4,0.40) 100%);
 }
 
-/* ---- Façade pipe ranks within dark case ---- */
+/* ---- Façade pipe ranks within case ---- */
 .tower-pipe-ranks {
   display:flex; align-items:flex-end; justify-content:center;
-  gap:2px; padding:8px 4px 0; flex:1;
+  gap:3px; padding:6px 4px 0; flex:1;
   position:relative; z-index:1;
+}
+/* Individual rank (one per division) — horizontal pipe row */
+.tower-rank {
+  display:flex; align-items:flex-end; justify-content:center;
+  gap:2px; padding:0 3px;
 }
 
 /* ---- Tower niche (below pipe case) ---- */
@@ -667,56 +671,56 @@ html, body {
    Distinctive mouth opening + gold ring + rounded top
    ================================================================ */
 .pipe {
-  /* Cylindrical metallic body — bright center, dark edges (3D tube) */
+  /* Warm gilded brass body — bright gold center, rich amber edges */
   background:linear-gradient(90deg,
-    #788088 0%, #9aa2aa 8%, #c8ccd0 22%,
-    #f0f3f5 38%, #e4e8ec 50%,
-    #b8c0c8 68%, #9098a0 84%, #707880 100%);
+    #8a6828 0%, #b89040 8%, #d4b868 20%,
+    #f0e0a8 38%, #e8d498 52%,
+    #c8a858 70%, #a88040 86%, #7a5820 100%);
   border-radius:50% 50% 3px 3px / 18% 18% 0 0;
   position:relative; cursor:pointer;
   transition:box-shadow 0.15s ease-out, filter 0.15s ease-out, transform 0.12s ease-out;
   box-shadow:
-    inset 2px 0 3px rgba(255,255,255,0.25),
-    inset -2px 0 3px rgba(30,30,35,0.30),
-    0 4px 10px rgba(40,35,25,0.40);
+    inset 2px 0 3px rgba(255,255,240,0.30),
+    inset -2px 0 3px rgba(60,30,10,0.25),
+    0 3px 8px rgba(60,40,15,0.35);
 }
 .pipe::before {
-  /* Gold ornamental ring above the mouth */
+  /* Ornamental bright gold ring above the mouth */
   content:'';
   position:absolute;
   bottom:28%;
   left:-1px; right:-1px;
   height:4px;
   background:linear-gradient(90deg,
-    #b89848 0%, #d4b860 15%, #e8d080 35%,
-    #f0e0a0 50%,
-    #e8d080 65%, #d4b860 85%, #b89848 100%);
+    #c8a040 0%, #e0c870 15%, #f0e090 35%,
+    #f8f0c0 50%,
+    #f0e090 65%, #e0c870 85%, #c8a040 100%);
   border-radius:1px;
-  box-shadow:0 1px 2px rgba(0,0,0,0.25);
+  box-shadow:0 1px 2px rgba(80,40,10,0.20);
   z-index:2;
 }
 .pipe::after {
-  /* Mouth — dark rectangular opening with bright upper lip */
+  /* Mouth — dark rectangular opening with golden upper lip */
   content:'';
   position:absolute;
   bottom:18%;
   left:8%; right:8%;
-  height:16px;
+  height:14px;
   background:linear-gradient(180deg,
-    #0e0e10 0%, #1a1c20 40%, #141518 100%);
-  border-top:2.5px solid #f8fafc;  /* bright upper lip (metal) */
-  border-bottom:1px solid #586068;  /* subtle lower lip shadow */
+    #1a1208 0%, #2a1e10 40%, #1a1008 100%);
+  border-top:2.5px solid #e8d090;  /* golden upper lip */
+  border-bottom:1px solid #786030;  /* brass-toned lower lip */
   border-radius:1px;
-  box-shadow:inset 0 2px 6px rgba(0,0,0,0.5);
+  box-shadow:inset 0 2px 5px rgba(0,0,0,0.45);
   z-index:1;
 }
 .pipe.active {
   box-shadow:
-    inset 2px 0 3px rgba(255,255,255,0.35),
-    inset -2px 0 3px rgba(30,30,35,0.20),
-    0 0 28px 10px rgba(255,218,125,0.65),
-    0 0 56px 14px rgba(255,205,105,0.35) !important;
-  filter:brightness(1.30) saturate(1.1);
+    inset 2px 0 3px rgba(255,255,240,0.40),
+    inset -2px 0 3px rgba(60,30,10,0.18),
+    0 0 24px 8px rgba(255,220,140,0.60),
+    0 0 48px 14px rgba(255,200,110,0.30) !important;
+  filter:brightness(1.25) saturate(1.05);
   transform:scale(1.03);
 }
 
@@ -839,9 +843,9 @@ html, body {
    RESPONSIVE
    ================================================================ */
 @media (max-width:1000px) {
-  #dome { height:110px; }
-  #dome-oculus { width:38px; height:38px; }
-  #dome-lantern { top:-36px; transform:translateX(-50%) scale(0.8); }
+  #dome { height:80px; }
+  #dome-oculus { width:32px; height:32px; }
+  #dome-lantern { top:-28px; transform:translateX(-50%) scale(0.75); }
   .keyboard-row--solo  .key { width:20px; height:28px; }
   .keyboard-row--swell .key { width:22px; height:28px; }
   .keyboard-row--great .key { width:20px; height:28px; }
@@ -849,32 +853,32 @@ html, body {
   .key-note { font-size:0.44rem; }
   .key-hint { font-size:0.27rem; }
   .keyboard-label { width:28px; min-width:28px; font-size:0.43rem; }
-  #rose-window { width:110px; height:110px; }
-  #rose-center { width:22px; height:22px; }
-  .side-arch { width:50px; height:90px; }
-  .spandrel { width:38px; height:50px; }
+  #rose-window { width:100px; height:100px; }
+  #rose-center { width:20px; height:20px; }
+  .side-arch { width:50px; height:80px; }
+  .spandrel { width:38px; height:45px; }
   .pipe-tower { flex:0 0 34%; }
   #center-bay  { flex:0 0 32%; }
-  .pipe-case { min-height:200px; }
+  .pipe-case { min-height:140px; }
   .pilaster { flex:0 0 16px; }
   .pilaster-cap { width:22px; height:14px; }
   .pilaster-shaft { width:14px; }
-  .angel { transform:translateX(-50%) scale(0.75); }
-  .angel-right { transform:translateX(-50%) scaleX(-1) scale(0.75); }
+  .angel { transform:translateX(-50%) scale(0.7); }
+  .angel-right { transform:translateX(-50%) scaleX(-1) scale(0.7); }
   .console-cheek { width:20px; height:38px; }
   .console-cheek-l { left:-18px; }
   .console-cheek-r { right:-18px; }
   .cheek-scroll { width:20px; height:38px; }
   #stop-board { gap:4px; }
   .stop-label { font-size:0.44rem; padding:1px 4px; }
-  .tower-niche .niche-arch { width:30px; height:26px; }
-  .tower-niche .niche-statue { width:10px; height:20px; }
+  .tower-niche .niche-arch { width:28px; height:22px; }
+  .tower-niche .niche-statue { width:9px; height:18px; }
 }
 
 @media (max-width:700px) {
-  #dome { height:70px; }
+  #dome { height:55px; }
   #dome-lantern { display:none; }
-  #frieze-latin .latin-text { font-size:0.48rem; letter-spacing:0.07em; }
+  #frieze-latin .latin-text { font-size:0.44rem; letter-spacing:0.06em; }
   #organ-wall { flex-wrap:wrap; }
   .pipe-tower { flex:0 0 22%; }
   #tower-left  { border-right:none; }
@@ -885,7 +889,7 @@ html, body {
   .tower-div-label { font-size:0.38rem; }
   .tower-base { display:none; }
   .console-cheek { display:none; }
-  .pipe-case { min-height:120px; }
+  .pipe-case { min-height:100px; }
   .pilaster { flex:0 0 10px; }
   .pilaster-cap { width:14px; height:10px; }
   .pilaster-cap::before, .pilaster-cap::after { width:8px; height:4px; top:3px; }
@@ -902,9 +906,9 @@ html, body {
   .key-note { font-size:0.36rem; }
   .key-hint { font-size:0.23rem; }
   .keyboard-label { width:20px; min-width:20px; font-size:0.36rem; }
-  #rose-window { width:65px; height:65px; }
-  #rose-center { width:15px; height:15px; }
-  .side-arch { width:28px; height:55px; }
+  #rose-window { width:60px; height:60px; }
+  #rose-center { width:14px; height:14px; }
+  .side-arch { width:28px; height:50px; }
   .spandrel { display:none; }
   .tower-crown { height:12px; }
   #stop-board { flex-wrap:wrap; gap:2px; padding:2px 3px; }

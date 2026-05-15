@@ -114,12 +114,12 @@
       rankEl.className = 'tower-rank';
       rankEl.dataset.division = divName;
 
-      // Pipe sizes: tall, monumental tower pipes (300-420px range)
+      // Pipe sizes: tower pipes, compact enough to avoid scrolling
       const sizeByDiv = {
-        choir: { hMin: 260, hMax: 430, wBase: 32 },
-        great: { hMin: 210, hMax: 360, wBase: 28 },
-        swell: { hMin: 170, hMax: 310, wBase: 25 },
-        solo:  { hMin: 130, hMax: 250, wBase: 22 },
+        choir: { hMin: 140, hMax: 260, wBase: 28 },
+        great: { hMin: 110, hMax: 210, wBase: 25 },
+        swell: { hMin:  90, hMax: 170, wBase: 22 },
+        solo:  { hMin:  70, hMax: 140, wBase: 19 },
       };
       const sz = sizeByDiv[divName];
 
