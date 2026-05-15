@@ -97,38 +97,44 @@
 
   // ------------------------------------------------------------------
   // Build playable façade pipes in a tower
+  // orientation: 'left' = tallest at outer edge (index 0), decreasing inward
+  //              'right' = tallest at outer edge (index n-1), increasing outward
   // ------------------------------------------------------------------
-  function buildTowerDivisionPipes(container, divNames) {
-    // Sort divisions: deeper/larger pipes first (choir before great, swell before solo)
+  function buildTowerDivisionPipes(container, divNames, orientation) {
+    // Sort divisions: deeper/larger pipes first
     const ordered = divNames.slice().sort(function (a, b) {
-      const aBase = DIVISIONS[a].notes[0].freq;
-      const bBase = DIVISIONS[b].notes[0].freq;
-      return aBase - bBase; // lower freq = bigger pipe = first
+      return DIVISIONS[a].notes[0].freq - DIVISIONS[b].notes[0].freq;
     });
 
-    ordered.forEach(function (divName, divIdx) {
+    ordered.forEach(function (divName) {
       const div = DIVISIONS[divName];
       const n = div.keys.length;
 
-      // Create a rank group per division
       const rankEl = document.createElement('div');
       rankEl.className = 'tower-rank';
       rankEl.dataset.division = divName;
 
-      // Pipe sizes: tower pipes are tall and imposing
-      // Deeper divisions get larger pipes
+      // Pipe sizes: tall, monumental tower pipes (300-420px range)
       const sizeByDiv = {
-        choir: { hMin: 160, hMax: 260, wBase: 30 },
-        great: { hMin: 120, hMax: 210, wBase: 26 },
-        swell: { hMin: 100, hMax: 180, wBase: 24 },
-        solo:  { hMin:  80, hMax: 150, wBase: 22 },
+        choir: { hMin: 260, hMax: 430, wBase: 32 },
+        great: { hMin: 210, hMax: 360, wBase: 28 },
+        swell: { hMin: 170, hMax: 310, wBase: 25 },
+        solo:  { hMin: 130, hMax: 250, wBase: 22 },
       };
       const sz = sizeByDiv[divName];
 
       for (let i = 0; i < n; i++) {
-        const t = i / (n - 1 || 1);
+        // Symmetric height: tallest at outer edge, decreasing toward center
+        var t;
+        if (orientation === 'left') {
+          // Left tower: index 0 is outer edge → tallest
+          t = i / (n - 1 || 1);
+        } else {
+          // Right tower: index n-1 is outer edge → tallest
+          t = (n - 1 - i) / (n - 1 || 1);
+        }
         const h = Math.round(sz.hMax - t * (sz.hMax - sz.hMin));
-        const w = Math.round(sz.wBase - t * 5);
+        const w = Math.round(sz.wBase - t * 6);
 
         const pipeEl = document.createElement('div');
         pipeEl.className = 'pipe pipe--' + div.cls;
@@ -137,7 +143,7 @@
         pipeEl.dataset.division = divName;
         pipeEl.style.height = h + 'px';
         pipeEl.style.width  = w + 'px';
-        if (div.pipeTint) pipeEl.style.background = div.pipeTint;
+        // CSS provides the metallic cylindrical gradient — no inline tint
 
         rankEl.appendChild(pipeEl);
         elements[div.keys[i]] = Object.assign(elements[div.keys[i]] || {}, { pipeEl: pipeEl });
@@ -199,9 +205,9 @@
   // Build the entire UI
   // ------------------------------------------------------------------
   function buildUI() {
-    // Façade pipes in towers (playable)
-    buildTowerDivisionPipes(towerLeftPipes, LEFT_DIVISIONS);
-    buildTowerDivisionPipes(towerRightPipes, RIGHT_DIVISIONS);
+    // Façade pipes in towers (playable, symmetric arch profile)
+    buildTowerDivisionPipes(towerLeftPipes, LEFT_DIVISIONS, 'left');
+    buildTowerDivisionPipes(towerRightPipes, RIGHT_DIVISIONS, 'right');
 
     // Keyboard rows in center console
     buildKeyboardRows();
