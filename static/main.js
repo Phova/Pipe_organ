@@ -1,8 +1,9 @@
 /* ================================================================
-   Pipe Organ — Main controller (Baroque multi-manual edition)
-   Four divisions mapped to keyboard rows, with visual feedback.
-   Three-bay organ wall: left tower · center (hauptwerk + console
-   + rückpositiv) · right tower · pedal section.
+   Pipe Organ — Main controller (Baroque tower edition)
+   Four divisions split across two towers:
+     Left tower  — Choir + Great (façade pipes)
+     Right tower — Swell + Solo  (façade pipes)
+   Keyboard console in center bay.
    ================================================================ */
 
 (function () {
@@ -75,149 +76,59 @@
     });
   }
 
+  // Keyboard row order (top to bottom)
   const DIV_ORDER = ['solo', 'swell', 'great', 'choir'];
+
+  // Tower assignments: which tower gets which divisions
+  const LEFT_DIVISIONS  = ['choir', 'great'];   // deeper pipes, left tower
+  const RIGHT_DIVISIONS = ['swell', 'solo'];     // brighter pipes, right tower
 
   // ------------------------------------------------------------------
   // DOM refs
   // ------------------------------------------------------------------
-  const hauptwerkPipes = document.getElementById('hauptwerk-pipes');
   const towerLeftPipes  = document.getElementById('tower-left-pipes');
   const towerRightPipes = document.getElementById('tower-right-pipes');
-  const ruckpositivPipes = document.getElementById('ruckpositiv-pipes');
-  const pedalLeft  = document.getElementById('pedal-left');
-  const pedalRight = document.getElementById('pedal-right');
-  const keyboardStack = document.getElementById('keyboard-stack');
-  const tremulantBtn = document.getElementById('tremulant-btn');
-  const voiceCountEl = document.getElementById('voice-count');
+  const keyboardStack   = document.getElementById('keyboard-stack');
+  const tremulantBtn    = document.getElementById('tremulant-btn');
+  const voiceCountEl    = document.getElementById('voice-count');
 
   /** Map: keyChar → { pipeEl, keyEl } */
   const elements = {};
 
   // ------------------------------------------------------------------
-  // Pipe colour palettes for decorative (non-playable) pipes
+  // Build playable façade pipes in a tower
   // ------------------------------------------------------------------
-  function decorativePipeGradient() {
-    const tints = [
-      'linear-gradient(90deg,#c9a040,#e8d080,#f5e8b0,#e8d080,#c9a040)',
-      'linear-gradient(90deg,#c0a860,#e0cc90,#f0e4c0,#e0cc90,#c0a860)',
-      'linear-gradient(90deg,#b8944e,#d4b87a,#e8d5a3,#f0e2b8,#e8d5a3,#d4b87a,#b8944e)',
-      'linear-gradient(90deg,#8a6d40,#b89860,#d4b880,#c8a870,#a08050,#8a6d40)',
-      'linear-gradient(90deg,#d4b860,#e8d0a0,#f5e8c0,#e8d0a0,#d4b860)',
-      'linear-gradient(90deg,#b8a060,#d8c490,#e8d8b0,#d8c490,#b8a060)',
-    ];
-    return tints[Math.floor(Math.random() * tints.length)];
-  }
-
-  // ------------------------------------------------------------------
-  // Build decorative tower pipes (left or right)
-  // ------------------------------------------------------------------
-  function buildTowerPipes(container, count) {
-    // Three ranks per tower: outer (tall) → middle → inner (shorter)
-    const ranks = [
-      { n: Math.floor(count * 0.35), hMin: 280, hMax: 360, w: 22 },
-      { n: Math.floor(count * 0.35), hMin: 180, hMax: 260, w: 18 },
-      { n: Math.floor(count * 0.30), hMin: 100, hMax: 170, w: 14 },
-    ];
-
-    ranks.forEach(function (rank) {
-      const rankEl = document.createElement('div');
-      rankEl.className = 'tower-rank';
-
-      for (let i = 0; i < rank.n; i++) {
-        const t = i / (rank.n - 1 || 1);
-        const h = Math.round(rank.hMax - t * (rank.hMax - rank.hMin));
-        const w = Math.round(rank.w - t * 3);
-
-        const pipe = document.createElement('div');
-        pipe.className = 'pipe pipe-decorative';
-        pipe.style.height = h + 'px';
-        pipe.style.width  = w + 'px';
-        pipe.style.background = decorativePipeGradient();
-
-        rankEl.appendChild(pipe);
-      }
-
-      container.appendChild(rankEl);
+  function buildTowerDivisionPipes(container, divNames) {
+    // Sort divisions: deeper/larger pipes first (choir before great, swell before solo)
+    const ordered = divNames.slice().sort(function (a, b) {
+      const aBase = DIVISIONS[a].notes[0].freq;
+      const bBase = DIVISIONS[b].notes[0].freq;
+      return aBase - bBase; // lower freq = bigger pipe = first
     });
-  }
 
-  // ------------------------------------------------------------------
-  // Build decorative rückpositiv pipes (small, in center below console)
-  // ------------------------------------------------------------------
-  function buildRuckpositivPipes(container) {
-    const count = 18;
-    const rankEl = document.createElement('div');
-    rankEl.className = 'ruckpositiv-rank';
-
-    for (let i = 0; i < count; i++) {
-      const mid = (count - 1) / 2;
-      const dist = Math.abs(i - mid) / mid; // 0 at center, 1 at edges
-      const h = Math.round(120 - dist * 50); // 120 px center → 70 px edge
-      const w = Math.round(12 - dist * 4);
-
-      const pipe = document.createElement('div');
-      pipe.className = 'pipe pipe-decorative pipe-ruck';
-      pipe.style.height = h + 'px';
-      pipe.style.width  = w + 'px';
-      pipe.style.background = decorativePipeGradient();
-
-      rankEl.appendChild(pipe);
-    }
-    container.appendChild(rankEl);
-  }
-
-  // ------------------------------------------------------------------
-  // Build pedal pipes (very wide, short bass pipes)
-  // ------------------------------------------------------------------
-  function buildPedalPipes(container, count) {
-    for (let i = 0; i < count; i++) {
-      const t = i / (count - 1 || 1);
-      const h = Math.round(100 - t * 30);
-      const w = Math.round(36 - t * 8);
-
-      const pipe = document.createElement('div');
-      pipe.className = 'pipe pipe-decorative pipe-pedal';
-      pipe.style.height = h + 'px';
-      pipe.style.width  = w + 'px';
-      pipe.style.background =
-        'linear-gradient(90deg,#6a4a28,#8a6038,#a07848,#8a6038,#6a4a28)';
-
-      container.appendChild(pipe);
-    }
-  }
-
-  // ------------------------------------------------------------------
-  // Build the UI: pipes + keyboards per division
-  // ------------------------------------------------------------------
-  function buildUI() {
-    // ---- Tower pipes (decorative) ----
-    buildTowerPipes(towerLeftPipes, 30);
-    buildTowerPipes(towerRightPipes, 30);
-
-    // ---- Rückpositiv pipes (decorative) ----
-    buildRuckpositivPipes(ruckpositivPipes);
-
-    // ---- Pedal pipes (decorative) ----
-    buildPedalPipes(pedalLeft, 10);
-    buildPedalPipes(pedalRight, 10);
-
-    // ---- Hauptwerk pipes (playable, 4 divisions) ----
-    DIV_ORDER.forEach(function (divName) {
+    ordered.forEach(function (divName, divIdx) {
       const div = DIVISIONS[divName];
       const n = div.keys.length;
 
-      const groupEl = document.createElement('div');
-      groupEl.className = 'pipe-group pipe-group--' + div.cls;
-      groupEl.dataset.division = divName;
+      // Create a rank group per division
+      const rankEl = document.createElement('div');
+      rankEl.className = 'tower-rank';
+      rankEl.dataset.division = divName;
 
-      const heightMin = { choir: 130, great: 110, swell: 90, solo: 70 }[divName];
-      const heightMax = { choir: 200, great: 175, swell: 150, solo: 125 }[divName];
-      const widthBase  = { choir: 28, great: 26, swell: 24, solo: 22 }[divName];
+      // Pipe sizes: tower pipes are tall and imposing
+      // Deeper divisions get larger pipes
+      const sizeByDiv = {
+        choir: { hMin: 160, hMax: 260, wBase: 30 },
+        great: { hMin: 120, hMax: 210, wBase: 26 },
+        swell: { hMin: 100, hMax: 180, wBase: 24 },
+        solo:  { hMin:  80, hMax: 150, wBase: 22 },
+      };
+      const sz = sizeByDiv[divName];
 
       for (let i = 0; i < n; i++) {
         const t = i / (n - 1 || 1);
-        const h = Math.round(heightMax - t * (heightMax - heightMin));
-        const w = Math.round(widthBase - t * 6);
+        const h = Math.round(sz.hMax - t * (sz.hMax - sz.hMin));
+        const w = Math.round(sz.wBase - t * 5);
 
         const pipeEl = document.createElement('div');
         pipeEl.className = 'pipe pipe--' + div.cls;
@@ -228,14 +139,18 @@
         pipeEl.style.width  = w + 'px';
         if (div.pipeTint) pipeEl.style.background = div.pipeTint;
 
-        groupEl.appendChild(pipeEl);
-        elements[div.keys[i]] = { ...(elements[div.keys[i]] || {}), pipeEl };
+        rankEl.appendChild(pipeEl);
+        elements[div.keys[i]] = Object.assign(elements[div.keys[i]] || {}, { pipeEl: pipeEl });
       }
 
-      hauptwerkPipes.appendChild(groupEl);
+      container.appendChild(rankEl);
     });
+  }
 
-    // ---- Keyboard rows (4 manuals) ----
+  // ------------------------------------------------------------------
+  // Build keyboard rows (center console)
+  // ------------------------------------------------------------------
+  function buildKeyboardRows() {
     DIV_ORDER.forEach(function (divName) {
       const div = DIVISIONS[divName];
       const n = div.keys.length;
@@ -272,12 +187,24 @@
         keyEl.addEventListener('touchend',  function () { release(keyChar); });
 
         keysWrap.appendChild(keyEl);
-        elements[keyChar] = { ...(elements[keyChar] || {}), keyEl };
+        elements[keyChar] = Object.assign(elements[keyChar] || {}, { keyEl: keyEl });
       }
 
       kbRow.appendChild(keysWrap);
       keyboardStack.appendChild(kbRow);
     });
+  }
+
+  // ------------------------------------------------------------------
+  // Build the entire UI
+  // ------------------------------------------------------------------
+  function buildUI() {
+    // Façade pipes in towers (playable)
+    buildTowerDivisionPipes(towerLeftPipes, LEFT_DIVISIONS);
+    buildTowerDivisionPipes(towerRightPipes, RIGHT_DIVISIONS);
+
+    // Keyboard rows in center console
+    buildKeyboardRows();
   }
 
   // ------------------------------------------------------------------

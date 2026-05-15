@@ -75,12 +75,13 @@
     <div id="acanthus-frieze-top" class="acanthus-band"></div>
 
     <!-- ============================================================ -->
-    <!--  THE ORGAN WALL — three-bay horizontal composition           -->
-    <!--  Left tower · Center bay · Right tower                       -->
+    <!--  THE ORGAN WALL — three-bay cathedral composition            -->
+    <!--  Left tower (Choir+Great pipes) · Center console ·           -->
+    <!--  Right tower (Swell+Solo pipes) — symmetric, grandiose       -->
     <!-- ============================================================ -->
     <div id="organ-wall">
 
-      <!-- ===== LEFT PIPE TOWER ===== -->
+      <!-- ===== LEFT PIPE TOWER — Choir & Great divisions ===== -->
       <div id="tower-left" class="pipe-tower">
         <!-- Angel statue atop tower -->
         <div class="angel angel-left">
@@ -97,17 +98,19 @@
         </div>
         <!-- Tower crown / pediment -->
         <div class="tower-crown">
+          <div class="tower-crown-scroll scroll-l"></div>
           <div class="tower-pediment"></div>
-          <div class="tower-scroll scroll-l"></div>
-          <div class="tower-scroll scroll-r"></div>
+          <div class="tower-crown-scroll scroll-r"></div>
           <div class="tower-crown-crest"></div>
         </div>
-        <!-- Pipe ranks -->
+        <!-- Tower division label -->
+        <div class="tower-div-label">Choir · Great</div>
+        <!-- Façade pipe ranks (playable, 2 divisions) -->
         <div id="tower-left-pipes" class="tower-pipe-ranks">
-          <!-- JS fills decorative pipes -->
+          <!-- JS fills Choir + Great playable pipes -->
         </div>
-        <!-- Statue niche -->
-        <div class="tower-niche">
+        <!-- Statue niche below pipes -->
+        <div class="tower-niche tower-niche-lower">
           <div class="niche-arch"></div>
           <div class="niche-statue"></div>
           <div class="niche-pedestal"></div>
@@ -119,60 +122,48 @@
         </div>
       </div>
 
-      <!-- ===== CENTER BAY ===== -->
+      <!-- ===== CENTER BAY — Console only ===== -->
       <div id="center-bay">
-        <!-- Hauptwerk pipe array (above the console) -->
-        <div id="hauptwerk">
-          <div class="center-crown">
-            <div class="center-crown-scroll"></div>
-            <div class="center-crown-crest"></div>
-            <div class="center-crown-scroll"></div>
+        <!-- Ornamental crown above console -->
+        <div class="console-crown">
+          <div class="console-crown-scroll"></div>
+          <div class="console-crown-medallion">
+            <span class="medallion-text">Soli Deo Gloria</span>
           </div>
-          <div id="hauptwerk-pipes">
-            <!-- JS fills playable pipes (4 divisions) -->
-          </div>
-          <div class="hauptwerk-cornice"></div>
+          <div class="console-crown-scroll"></div>
         </div>
 
-        <!-- Console area -->
-        <div id="console-wrapper">
-          <!-- Music rack -->
-          <div id="music-rack">
-            <div id="music-rack-frame">
-              <div class="rack-ornament rack-orn-l"></div>
-              <div class="rack-ornament rack-orn-r"></div>
-              <div id="music-shelf"></div>
-            </div>
+        <!-- Music rack -->
+        <div id="music-rack">
+          <div id="music-rack-frame">
+            <div class="rack-ornament rack-orn-l"></div>
+            <div class="rack-ornament rack-orn-r"></div>
+            <div id="music-shelf"></div>
           </div>
-
-          <!-- Stop board -->
-          <div id="stop-board">
-            <span class="stop-label stop-solo">Solo &mdash; Trompette</span>
-            <span class="stop-label stop-swell">Swell &mdash; Flute</span>
-            <span class="stop-label stop-great">Great &mdash; Principal</span>
-            <span class="stop-label stop-choir">Choir &mdash; Dulciana</span>
-          </div>
-
-          <!-- Keyboard stack -->
-          <div id="keyboard-stack">
-            <!-- JS fills .keyboard-row x 4 -->
-          </div>
-
-          <!-- Console cheeks (end blocks) -->
-          <div class="console-cheek console-cheek-l"><div class="cheek-scroll"></div></div>
-          <div class="console-cheek console-cheek-r"><div class="cheek-scroll"></div></div>
         </div>
 
-        <!-- Rückpositiv (small pipe array below console) -->
-        <div id="ruckpositiv">
-          <div id="ruckpositiv-pipes">
-            <!-- JS fills decorative small pipes -->
-          </div>
-          <div class="ruckpositiv-base"></div>
+        <!-- Stop board -->
+        <div id="stop-board">
+          <span class="stop-label stop-choir">Choir &mdash; Dulciana</span>
+          <span class="stop-label stop-great">Great &mdash; Principal</span>
+          <span class="stop-label stop-swell">Swell &mdash; Flute</span>
+          <span class="stop-label stop-solo">Solo &mdash; Trompette</span>
         </div>
+
+        <!-- Keyboard stack -->
+        <div id="keyboard-stack">
+          <!-- JS fills .keyboard-row × 4 -->
+        </div>
+
+        <!-- Console cheeks (end blocks) -->
+        <div class="console-cheek console-cheek-l"><div class="cheek-scroll"></div></div>
+        <div class="console-cheek console-cheek-r"><div class="cheek-scroll"></div></div>
+
+        <!-- Console base moulding -->
+        <div class="console-base-inner"></div>
       </div>
 
-      <!-- ===== RIGHT PIPE TOWER ===== -->
+      <!-- ===== RIGHT PIPE TOWER — Swell & Solo divisions ===== -->
       <div id="tower-right" class="pipe-tower">
         <div class="angel angel-right">
           <div class="angel-halo"></div>
@@ -187,15 +178,18 @@
           </div>
         </div>
         <div class="tower-crown">
+          <div class="tower-crown-scroll scroll-l"></div>
           <div class="tower-pediment"></div>
-          <div class="tower-scroll scroll-l"></div>
-          <div class="tower-scroll scroll-r"></div>
+          <div class="tower-crown-scroll scroll-r"></div>
           <div class="tower-crown-crest"></div>
         </div>
+        <!-- Tower division label -->
+        <div class="tower-div-label">Swell · Solo</div>
+        <!-- Façade pipe ranks (playable, 2 divisions) -->
         <div id="tower-right-pipes" class="tower-pipe-ranks">
-          <!-- JS fills -->
+          <!-- JS fills Swell + Solo playable pipes -->
         </div>
-        <div class="tower-niche">
+        <div class="tower-niche tower-niche-lower">
           <div class="niche-arch"></div>
           <div class="niche-statue"></div>
           <div class="niche-pedestal"></div>
@@ -209,22 +203,7 @@
     </div><!-- /organ-wall -->
 
     <!-- ============================================================ -->
-    <!--  Pedal pipe section (large bass pipes at floor level)        -->
-    <!-- ============================================================ -->
-    <div id="pedal-section">
-      <div id="pedal-left" class="pedal-pipe-group">
-        <!-- JS fills wide bass pipes -->
-      </div>
-      <div id="pedal-gap">
-        <div class="pedal-gap-ornament"></div>
-      </div>
-      <div id="pedal-right" class="pedal-pipe-group">
-        <!-- JS fills -->
-      </div>
-    </div>
-
-    <!-- ============================================================ -->
-    <!--  Egg-and-dart moulding band                                  -->
+    <!--  Lower ornamental band                                       -->
     <!-- ============================================================ -->
     <div id="egg-dart-band">
       <div class="egg-dart-pattern"></div>
@@ -232,12 +211,15 @@
     </div>
 
     <!-- ============================================================ -->
-    <!--  Console base + controls                                     -->
+    <!--  Organ base plinth                                           -->
     <!-- ============================================================ -->
-    <div id="console-base">
-      <div id="base-moulding"></div>
+    <div id="organ-plinth">
+      <div class="plinth-moulding"></div>
     </div>
 
+    <!-- ============================================================ -->
+    <!--  Controls + hint (below the organ wall)                      -->
+    <!-- ============================================================ -->
     <div id="controls">
       <button id="tremulant-btn" title="Toggle Tremulant">Tremulant: Off</button>
       <span id="voice-count" class="voice-indicator"></span>
