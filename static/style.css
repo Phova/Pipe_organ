@@ -1,0 +1,377 @@
+/* ================================================================
+   Pipe Organ — Cathedral Style
+   White church aesthetic. No emoji. Copper & gold pipe organ.
+   ================================================================ */
+
+/* --- Reset & Base --- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Cormorant Garamond', 'Times New Roman', Georgia, serif;
+  background: #faf8f5;
+  color: #3a3530;
+  user-select: none;
+}
+
+/* --- Cathedral Container --- */
+#cathedral {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255,252,245,0.95) 0%, rgba(245,240,230,0.8) 60%, rgba(225,218,205,0.6) 100%),
+    radial-gradient(circle at 20% 80%, rgba(210,195,170,0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(210,195,170,0.12) 0%, transparent 50%),
+    linear-gradient(180deg, #fefdfb 0%, #faf7f0 40%, #f2ece0 100%);
+  position: relative;
+  padding: 20px 20px 0;
+}
+
+/* --- Dome (vaulted ceiling) --- */
+#dome {
+  width: 85%;
+  max-width: 900px;
+  height: 120px;
+  position: relative;
+  background: linear-gradient(180deg,
+    rgba(240,235,222,0.9) 0%,
+    rgba(250,247,240,0.7) 40%,
+    rgba(255,252,248,0.3) 100%
+  );
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  box-shadow:
+    inset 0 8px 32px rgba(180,165,140,0.2),
+    0 4px 16px rgba(160,145,125,0.15);
+  margin-bottom: -1px;
+  z-index: 1;
+}
+
+#dome-inner {
+  position: absolute;
+  bottom: 0;
+  left: 8%;
+  right: 8%;
+  height: 70%;
+  background: linear-gradient(180deg,
+    rgba(235,228,212,0.4) 0%,
+    rgba(250,247,240,0.2) 100%
+  );
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  box-shadow: inset 0 4px 20px rgba(180,165,140,0.15);
+}
+
+/* --- Rose Window --- */
+#rose-window-container {
+  position: relative;
+  z-index: 2;
+  margin-top: -30px;
+  margin-bottom: 8px;
+}
+
+#rose-window {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    #e8dfce 0deg 15deg,   #d4c8ae 15deg 30deg,
+    #e8dfce 30deg 45deg,  #d4c8ae 45deg 60deg,
+    #e8dfce 60deg 75deg,  #d4c8ae 75deg 90deg,
+    #e8dfce 90deg 105deg, #d4c8ae 105deg 120deg,
+    #e8dfce 120deg 135deg,#d4c8ae 135deg 150deg,
+    #e8dfce 150deg 165deg,#d4c8ae 165deg 180deg,
+    #e8dfce 180deg 195deg,#d4c8ae 195deg 210deg,
+    #e8dfce 210deg 225deg,#d4c8ae 225deg 240deg,
+    #e8dfce 240deg 255deg,#d4c8ae 255deg 270deg,
+    #e8dfce 270deg 285deg,#d4c8ae 285deg 300deg,
+    #e8dfce 300deg 315deg,#d4c8ae 315deg 330deg,
+    #e8dfce 330deg 345deg,#d4c8ae 345deg 360deg
+  );
+  box-shadow:
+    0 0 40px rgba(200,180,140,0.3),
+    0 0 80px rgba(200,180,140,0.15),
+    inset 0 0 20px rgba(180,160,120,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+#rose-window::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  border: 2px solid rgba(180,160,120,0.5);
+}
+
+#rose-center {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #d4c8ae, #b8a88a);
+  box-shadow:
+    0 0 12px rgba(200,180,140,0.5),
+    inset 0 0 6px rgba(255,255,240,0.4);
+  z-index: 1;
+}
+
+/* --- Pillars --- */
+.pillar {
+  position: absolute;
+  top: 100px;
+  bottom: 160px;
+  width: 40px;
+  background: linear-gradient(90deg,
+    rgba(225,218,205,0.5) 0%,
+    rgba(245,240,230,0.6) 20%,
+    rgba(255,252,245,0.7) 50%,
+    rgba(245,240,230,0.6) 80%,
+    rgba(225,218,205,0.5) 100%
+  );
+  box-shadow:
+    inset 2px 0 8px rgba(180,165,140,0.15),
+    inset -2px 0 8px rgba(180,165,140,0.15);
+  z-index: 0;
+}
+
+#pillar-left  { left: 6%; }
+#pillar-right { right: 6%; }
+
+/* --- Organ Facade (pipes area) --- */
+#organ-facade {
+  position: relative;
+  z-index: 3;
+  width: 88%;
+  max-width: 1000px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
+#pipes-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 8px;
+}
+
+/* --- Individual Pipe --- */
+.pipe {
+  border-radius: 3px 3px 5px 5px;
+  position: relative;
+  transition:
+    box-shadow 0.15s ease-out,
+    filter 0.15s ease-out,
+    background 0.3s ease;
+  cursor: default;
+}
+
+/* Pipe metallic gradient — copper / brass */
+.pipe {
+  background: linear-gradient(
+    90deg,
+    #b8944e 0%,
+    #d4b87a 15%,
+    #e8d5a3 35%,
+    #f0e2b8 50%,
+    #e8d5a3 65%,
+    #d4b87a 85%,
+    #b8944e 100%
+  );
+  box-shadow:
+    inset 1px 0 3px rgba(255,255,240,0.3),
+    inset -1px 0 3px rgba(80,60,20,0.2),
+    0 2px 6px rgba(140,110,60,0.25);
+}
+
+/* Pipe mouth (labium) — subtle shadow line */
+.pipe::after {
+  content: '';
+  position: absolute;
+  top: 22%;
+  left: 15%;
+  right: 15%;
+  height: 2px;
+  background: rgba(80,60,20,0.3);
+  border-radius: 1px;
+  box-shadow: 0 1px 1px rgba(255,255,240,0.2);
+}
+
+/* Pipe — active (playing) */
+.pipe.active {
+  box-shadow:
+    inset 1px 0 3px rgba(255,255,240,0.5),
+    inset -1px 0 3px rgba(80,60,20,0.15),
+    0 0 24px 8px rgba(255,215,120,0.55),
+    0 0 48px 12px rgba(255,200,100,0.25);
+  filter: brightness(1.25);
+}
+
+/* --- Note Labels --- */
+#note-labels {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 4px;
+  padding: 0 8px;
+  z-index: 3;
+}
+
+.note-label {
+  text-align: center;
+  font-size: 0.65rem;
+  font-weight: 500;
+  font-style: italic;
+  color: #8a8070;
+  letter-spacing: 0.02em;
+  transition: color 0.15s;
+  width: 32px;
+}
+
+.note-label.highlight {
+  color: #c9a040;
+  font-weight: 600;
+}
+
+/* --- Keyboard --- */
+#keyboard-container {
+  position: relative;
+  z-index: 4;
+  margin-bottom: 10px;
+}
+
+#keyboard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: linear-gradient(180deg, #3a3530, #2a2520);
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow:
+    0 4px 16px rgba(0,0,0,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.key {
+  width: 36px;
+  height: 50px;
+  background: linear-gradient(180deg, #fefefe 0%, #f5f0e8 30%, #e8e0d4 100%);
+  border: none;
+  border-radius: 0 0 6px 6px;
+  cursor: pointer;
+  font-family: 'Cormorant Garamond', 'Times New Roman', Georgia, serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #5a5040;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  box-shadow:
+    0 3px 6px rgba(0,0,0,0.2),
+    0 1px 2px rgba(0,0,0,0.1),
+    inset 0 1px 0 rgba(255,255,255,0.8);
+  transition:
+    background 0.1s ease,
+    box-shadow 0.1s ease,
+    transform 0.08s ease,
+    color 0.1s;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.key:hover {
+  background: linear-gradient(180deg, #fffefb 0%, #faf5ec 30%, #efe8d8 100%);
+}
+
+.key:active,
+.key.active {
+  background: linear-gradient(180deg, #f5e6c8 0%, #e8d5a3 50%, #d4c080 100%);
+  color: #8a6d20;
+  box-shadow:
+    0 1px 3px rgba(0,0,0,0.2),
+    inset 0 2px 4px rgba(0,0,0,0.12),
+    0 0 16px 4px rgba(255,215,120,0.35);
+  transform: translateY(2px);
+}
+
+/* --- Controls --- */
+#controls {
+  z-index: 5;
+  margin-bottom: 6px;
+}
+
+#tremulant-btn {
+  background: linear-gradient(180deg, #fefdfb, #f2ece0);
+  border: 1px solid #d5cfc4;
+  border-radius: 20px;
+  padding: 6px 20px;
+  font-family: 'Cormorant Garamond', 'Times New Roman', Georgia, serif;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: #6a6048;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+#tremulant-btn:hover {
+  background: linear-gradient(180deg, #f0e8d8, #e8dcc8);
+  color: #8a6d20;
+}
+
+#tremulant-btn.active {
+  background: linear-gradient(180deg, #f5e6c8, #e8d5a3);
+  color: #8a6d20;
+  border-color: #c9a040;
+  box-shadow: 0 0 10px rgba(200,170,80,0.25);
+}
+
+/* --- Hint --- */
+#hint {
+  z-index: 5;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: #b0a590;
+  letter-spacing: 0.03em;
+  margin-bottom: 12px;
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  .key { width: 28px; height: 42px; font-size: 0.7rem; }
+  .note-label { font-size: 0.55rem; width: 28px; }
+  .pipe { border-radius: 2px 2px 4px 4px; }
+  #pipes-container { gap: 2px; }
+  #keyboard { gap: 2px; padding: 6px 8px; }
+  #rose-window { width: 120px; height: 120px; }
+  #rose-center { width: 24px; height: 24px; }
+  #dome { height: 80px; }
+  .pillar { width: 24px; }
+}
+
+@media (max-width: 600px) {
+  .key { width: 20px; height: 36px; font-size: 0.6rem; border-radius: 0 0 4px 4px; }
+  .note-label { font-size: 0.45rem; width: 20px; }
+  .pipe { border-radius: 1px 1px 3px 3px; }
+  #pipes-container { gap: 1px; }
+  #keyboard { gap: 1px; padding: 4px 5px; }
+  #note-labels { gap: 1px; }
+  #rose-window { width: 80px; height: 80px; }
+  #rose-center { width: 18px; height: 18px; }
+  #dome { height: 50px; }
+  .pillar { width: 14px; top: 60px; bottom: 130px; }
+}
