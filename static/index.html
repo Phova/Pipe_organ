@@ -11,27 +11,12 @@
 </head>
 <body>
 
-  <!-- ============================================================ -->
-  <!--  Damask wallpaper overlay (subtle, fixed)                     -->
-  <!-- ============================================================ -->
   <div id="damask-overlay"></div>
-
-  <!-- ============================================================ -->
-  <!--  Flying buttresses (outside main flow, decorative)            -->
-  <!-- ============================================================ -->
-  <div id="flying-buttress-left" class="flying-buttress">
-    <div class="buttress-pier"></div>
-    <div class="buttress-arch"></div>
-  </div>
-  <div id="flying-buttress-right" class="flying-buttress">
-    <div class="buttress-pier"></div>
-    <div class="buttress-arch"></div>
-  </div>
 
   <div id="cathedral">
 
     <!-- ============================================================ -->
-    <!--  Dome with coffered ceiling + lantern                        -->
+    <!--  Dome with lantern                                           -->
     <!-- ============================================================ -->
     <div id="dome-area">
       <div id="dome-lantern">
@@ -48,15 +33,11 @@
     </div>
 
     <!-- ============================================================ -->
-    <!--  Latin inscription frieze                                    -->
+    <!--  Latin frieze + upper cornice                                -->
     <!-- ============================================================ -->
     <div id="frieze-latin">
       <span class="latin-text">S O L I&ensp;&middot;&ensp;D E O&ensp;&middot;&ensp;G L O R I A</span>
     </div>
-
-    <!-- ============================================================ -->
-    <!--  Cornice / entablature (upper)                               -->
-    <!-- ============================================================ -->
     <div id="cornice-upper" class="cornice">
       <div class="cornice-moulding c1"></div>
       <div class="cornice-moulding c2"></div>
@@ -65,24 +46,18 @@
     </div>
 
     <!-- ============================================================ -->
-    <!--  Rose window + flanking arches + spandrels                   -->
+    <!--  Clerestory — Rose window + flanking arches + spandrels      -->
     <!-- ============================================================ -->
     <div id="clerestory">
-      <div id="spandrel-left" class="spandrel">
-        <div class="spandrel-quatrefoil"></div>
-      </div>
+      <div id="spandrel-left" class="spandrel"><div class="spandrel-quatrefoil"></div></div>
       <div id="arch-left" class="side-arch"></div>
       <div id="rose-window-container">
-        <div id="rose-window">
-          <div id="rose-center"></div>
-        </div>
+        <div id="rose-window"><div id="rose-center"></div></div>
         <div id="rose-frame"></div>
         <div id="rose-glow"></div>
       </div>
       <div id="arch-right" class="side-arch"></div>
-      <div id="spandrel-right" class="spandrel">
-        <div class="spandrel-quatrefoil"></div>
-      </div>
+      <div id="spandrel-right" class="spandrel"><div class="spandrel-quatrefoil"></div></div>
     </div>
 
     <!-- ============================================================ -->
@@ -95,148 +70,156 @@
     </div>
 
     <!-- ============================================================ -->
-    <!--  Inner Corinthian pilasters (flanking the organ case)        -->
+    <!--  Acanthus frieze (above organ wall)                          -->
     <!-- ============================================================ -->
-    <div id="pilaster-left" class="corinthian-pilaster">
-      <div class="pilaster-capital">
-        <div class="pilaster-acanthus"></div>
-      </div>
-      <div class="pilaster-shaft"></div>
-      <div class="pilaster-base"></div>
-    </div>
-    <div id="pilaster-right" class="corinthian-pilaster">
-      <div class="pilaster-capital">
-        <div class="pilaster-acanthus"></div>
-      </div>
-      <div class="pilaster-shaft"></div>
-      <div class="pilaster-base"></div>
-    </div>
+    <div id="acanthus-frieze-top" class="acanthus-band"></div>
 
     <!-- ============================================================ -->
-    <!--  Spiral columns (outer Solomonic columns)                    -->
+    <!--  THE ORGAN WALL — three-bay horizontal composition           -->
+    <!--  Left tower · Center bay · Right tower                       -->
     <!-- ============================================================ -->
-    <div id="column-left" class="spiral-column">
-      <div class="column-capital"></div>
-      <div class="column-shaft"></div>
-      <div class="column-base"></div>
-      <div id="sconce-left" class="sconce">
-        <div class="sconce-bracket"></div>
-        <div class="sconce-flame"></div>
-        <div class="sconce-glow"></div>
-      </div>
-    </div>
-    <div id="column-right" class="spiral-column">
-      <div class="column-capital"></div>
-      <div class="column-shaft"></div>
-      <div class="column-base"></div>
-      <div id="sconce-right" class="sconce">
-        <div class="sconce-bracket"></div>
-        <div class="sconce-flame"></div>
-        <div class="sconce-glow"></div>
-      </div>
-    </div>
+    <div id="organ-wall">
 
-    <!-- ============================================================ -->
-    <!--  Side blind arcades                                          -->
-    <!-- ============================================================ -->
-    <div id="side-arcade-left" class="side-arcade">
-      <div class="arcade-arch"></div>
-      <div class="arcade-arch"></div>
-      <div class="arcade-arch"></div>
-    </div>
-    <div id="side-arcade-right" class="side-arcade">
-      <div class="arcade-arch"></div>
-      <div class="arcade-arch"></div>
-      <div class="arcade-arch"></div>
-    </div>
-
-    <!-- ============================================================ -->
-    <!--  Organ casework (the grand case)                             -->
-    <!-- ============================================================ -->
-    <div id="organ-casework">
-      <!-- Crown / pediment -->
-      <div id="casework-crown">
-        <div id="crown-scroll-left" class="baroque-scroll"></div>
-        <div id="crown-crest"></div>
-        <div id="crown-scroll-right" class="baroque-scroll"></div>
-      </div>
-
-      <!-- Tympanum — triangular pediment with cartouche -->
-      <div id="tympanum">
-        <div id="tympanum-inner">
-          <div id="cartouche">
-            <div id="cartouche-scroll-tl" class="cartouche-scroll"></div>
-            <div id="cartouche-scroll-tr" class="cartouche-scroll"></div>
-            <div id="cartouche-body">
-              <span class="cartouche-text">GLORIA IN EXCELSIS</span>
-            </div>
-            <div id="cartouche-scroll-bl" class="cartouche-scroll"></div>
-            <div id="cartouche-scroll-br" class="cartouche-scroll"></div>
+      <!-- ===== LEFT PIPE TOWER ===== -->
+      <div id="tower-left" class="pipe-tower">
+        <!-- Angel statue atop tower -->
+        <div class="angel angel-left">
+          <div class="angel-halo"></div>
+          <div class="angel-head"></div>
+          <div class="angel-wing wing-l"><div class="wing-feathers"></div></div>
+          <div class="angel-wing wing-r"><div class="wing-feathers"></div></div>
+          <div class="angel-body">
+            <div class="angel-robe-fold"></div>
+          </div>
+          <div class="angel-trumpet">
+            <div class="trumpet-bell"></div>
           </div>
         </div>
-      </div>
-
-      <!-- Acanthus leaf frieze (above pipes) -->
-      <div id="acanthus-frieze-upper" class="acanthus-frieze"></div>
-
-      <!-- Pipe facade -->
-      <div id="pipes-facade">
-        <div id="pipes-container">
-          <!-- JS fills .pipe-group × 4 -->
+        <!-- Tower crown / pediment -->
+        <div class="tower-crown">
+          <div class="tower-pediment"></div>
+          <div class="tower-scroll scroll-l"></div>
+          <div class="tower-scroll scroll-r"></div>
+          <div class="tower-crown-crest"></div>
+        </div>
+        <!-- Pipe ranks -->
+        <div id="tower-left-pipes" class="tower-pipe-ranks">
+          <!-- JS fills decorative pipes -->
+        </div>
+        <!-- Statue niche -->
+        <div class="tower-niche">
+          <div class="niche-arch"></div>
+          <div class="niche-statue"></div>
+          <div class="niche-pedestal"></div>
+        </div>
+        <!-- Base ornament -->
+        <div class="tower-base">
+          <div class="tower-base-moulding"></div>
+          <div class="tower-base-cartouche"></div>
         </div>
       </div>
 
-      <!-- Side scrolls / ears -->
-      <div id="casework-ear-left" class="casework-ear"></div>
-      <div id="casework-ear-right" class="casework-ear"></div>
-    </div>
+      <!-- ===== CENTER BAY ===== -->
+      <div id="center-bay">
+        <!-- Hauptwerk pipe array (above the console) -->
+        <div id="hauptwerk">
+          <div class="center-crown">
+            <div class="center-crown-scroll"></div>
+            <div class="center-crown-crest"></div>
+            <div class="center-crown-scroll"></div>
+          </div>
+          <div id="hauptwerk-pipes">
+            <!-- JS fills playable pipes (4 divisions) -->
+          </div>
+          <div class="hauptwerk-cornice"></div>
+        </div>
 
-    <!-- ============================================================ -->
-    <!--  Festoon / swag garlands between columns                     -->
-    <!-- ============================================================ -->
-    <div id="festoon-area">
-      <div id="festoon-left" class="festoon">
-        <div class="festoon-swag"></div>
-        <div class="festoon-rosette"></div>
-      </div>
-      <div id="festoon-right" class="festoon">
-        <div class="festoon-swag"></div>
-        <div class="festoon-rosette"></div>
-      </div>
-    </div>
+        <!-- Console area -->
+        <div id="console-wrapper">
+          <!-- Music rack -->
+          <div id="music-rack">
+            <div id="music-rack-frame">
+              <div class="rack-ornament rack-orn-l"></div>
+              <div class="rack-ornament rack-orn-r"></div>
+              <div id="music-shelf"></div>
+            </div>
+          </div>
 
-    <!-- ============================================================ -->
-    <!--  Stop labels (division indicators)                           -->
-    <!-- ============================================================ -->
-    <div id="stop-board">
-      <div class="stop-label stop-solo">Solo &mdash; Trompette</div>
-      <div class="stop-label stop-swell">Swell &mdash; Flute</div>
-      <div class="stop-label stop-great">Great &mdash; Principal</div>
-      <div class="stop-label stop-choir">Choir &mdash; Dulciana</div>
-    </div>
+          <!-- Stop board -->
+          <div id="stop-board">
+            <span class="stop-label stop-solo">Solo &mdash; Trompette</span>
+            <span class="stop-label stop-swell">Swell &mdash; Flute</span>
+            <span class="stop-label stop-great">Great &mdash; Principal</span>
+            <span class="stop-label stop-choir">Choir &mdash; Dulciana</span>
+          </div>
 
-    <!-- ============================================================ -->
-    <!--  Keyboard console with music rack and cheeks                 -->
-    <!-- ============================================================ -->
-    <div id="keyboard-console">
-      <!-- Music rack (above keyboards) -->
-      <div id="music-rack">
-        <div id="music-rack-frame">
-          <div class="rack-ornament rack-orn-l"></div>
-          <div class="rack-ornament rack-orn-r"></div>
-          <div id="music-shelf"></div>
+          <!-- Keyboard stack -->
+          <div id="keyboard-stack">
+            <!-- JS fills .keyboard-row x 4 -->
+          </div>
+
+          <!-- Console cheeks (end blocks) -->
+          <div class="console-cheek console-cheek-l"><div class="cheek-scroll"></div></div>
+          <div class="console-cheek console-cheek-r"><div class="cheek-scroll"></div></div>
+        </div>
+
+        <!-- Rückpositiv (small pipe array below console) -->
+        <div id="ruckpositiv">
+          <div id="ruckpositiv-pipes">
+            <!-- JS fills decorative small pipes -->
+          </div>
+          <div class="ruckpositiv-base"></div>
         </div>
       </div>
-      <!-- Keyboard stack -->
-      <div id="keyboard-stack">
-        <!-- JS fills .keyboard-row × 4 -->
+
+      <!-- ===== RIGHT PIPE TOWER ===== -->
+      <div id="tower-right" class="pipe-tower">
+        <div class="angel angel-right">
+          <div class="angel-halo"></div>
+          <div class="angel-head"></div>
+          <div class="angel-wing wing-l"><div class="wing-feathers"></div></div>
+          <div class="angel-wing wing-r"><div class="wing-feathers"></div></div>
+          <div class="angel-body">
+            <div class="angel-robe-fold"></div>
+          </div>
+          <div class="angel-trumpet">
+            <div class="trumpet-bell"></div>
+          </div>
+        </div>
+        <div class="tower-crown">
+          <div class="tower-pediment"></div>
+          <div class="tower-scroll scroll-l"></div>
+          <div class="tower-scroll scroll-r"></div>
+          <div class="tower-crown-crest"></div>
+        </div>
+        <div id="tower-right-pipes" class="tower-pipe-ranks">
+          <!-- JS fills -->
+        </div>
+        <div class="tower-niche">
+          <div class="niche-arch"></div>
+          <div class="niche-statue"></div>
+          <div class="niche-pedestal"></div>
+        </div>
+        <div class="tower-base">
+          <div class="tower-base-moulding"></div>
+          <div class="tower-base-cartouche"></div>
+        </div>
       </div>
-      <!-- Console cheeks (end blocks) -->
-      <div id="console-cheek-left" class="console-cheek">
-        <div class="cheek-scroll"></div>
+
+    </div><!-- /organ-wall -->
+
+    <!-- ============================================================ -->
+    <!--  Pedal pipe section (large bass pipes at floor level)        -->
+    <!-- ============================================================ -->
+    <div id="pedal-section">
+      <div id="pedal-left" class="pedal-pipe-group">
+        <!-- JS fills wide bass pipes -->
       </div>
-      <div id="console-cheek-right" class="console-cheek">
-        <div class="cheek-scroll"></div>
+      <div id="pedal-gap">
+        <div class="pedal-gap-ornament"></div>
+      </div>
+      <div id="pedal-right" class="pedal-pipe-group">
+        <!-- JS fills -->
       </div>
     </div>
 
@@ -249,22 +232,20 @@
     </div>
 
     <!-- ============================================================ -->
-    <!--  Console base / toe board                                    -->
+    <!--  Console base + controls                                     -->
     <!-- ============================================================ -->
     <div id="console-base">
       <div id="base-moulding"></div>
     </div>
 
-    <!-- ============================================================ -->
-    <!--  Controls & hint                                             -->
-    <!-- ============================================================ -->
     <div id="controls">
       <button id="tremulant-btn" title="Toggle Tremulant">Tremulant: Off</button>
       <span id="voice-count" class="voice-indicator"></span>
     </div>
+
     <div id="hint">Press keys A&ndash;Z, 1&ndash;9, 0, -, =, ;, &rsquo;, ,, ., / to play</div>
 
-  </div>
+  </div><!-- /cathedral -->
 
   <script src="organ.js"></script>
   <script src="main.js"></script>

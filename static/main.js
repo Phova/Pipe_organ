@@ -1,6 +1,8 @@
 /* ================================================================
    Pipe Organ — Main controller (Baroque multi-manual edition)
    Four divisions mapped to keyboard rows, with visual feedback.
+   Three-bay organ wall: left tower · center (hauptwerk + console
+   + rückpositiv) · right tower · pedal section.
    ================================================================ */
 
 (function () {
@@ -8,7 +10,6 @@
 
   // ------------------------------------------------------------------
   // Division definitions
-  // Each division maps a keyboard row → a set of notes (low→high)
   // ------------------------------------------------------------------
   const DIVISIONS = {
     solo: {
@@ -61,7 +62,7 @@
     },
   };
 
-  /** Build flat key→{freq,division,label} lookup */
+  /** Flat key → {freq, division, label} lookup */
   const KEY_MAP = {};
   for (const [divName, div] of Object.entries(DIVISIONS)) {
     div.keys.forEach((k, i) => {
@@ -74,13 +75,17 @@
     });
   }
 
-  // Division display order (top → bottom in the organ case)
   const DIV_ORDER = ['solo', 'swell', 'great', 'choir'];
 
   // ------------------------------------------------------------------
   // DOM refs
   // ------------------------------------------------------------------
-  const pipesContainer = document.getElementById('pipes-container');
+  const hauptwerkPipes = document.getElementById('hauptwerk-pipes');
+  const towerLeftPipes  = document.getElementById('tower-left-pipes');
+  const towerRightPipes = document.getElementById('tower-right-pipes');
+  const ruckpositivPipes = document.getElementById('ruckpositiv-pipes');
+  const pedalLeft  = document.getElementById('pedal-left');
+  const pedalRight = document.getElementById('pedal-right');
   const keyboardStack = document.getElementById('keyboard-stack');
   const tremulantBtn = document.getElementById('tremulant-btn');
   const voiceCountEl = document.getElementById('voice-count');
@@ -89,19 +94,122 @@
   const elements = {};
 
   // ------------------------------------------------------------------
+  // Pipe colour palettes for decorative (non-playable) pipes
+  // ------------------------------------------------------------------
+  function decorativePipeGradient() {
+    const tints = [
+      'linear-gradient(90deg,#c9a040,#e8d080,#f5e8b0,#e8d080,#c9a040)',
+      'linear-gradient(90deg,#c0a860,#e0cc90,#f0e4c0,#e0cc90,#c0a860)',
+      'linear-gradient(90deg,#b8944e,#d4b87a,#e8d5a3,#f0e2b8,#e8d5a3,#d4b87a,#b8944e)',
+      'linear-gradient(90deg,#8a6d40,#b89860,#d4b880,#c8a870,#a08050,#8a6d40)',
+      'linear-gradient(90deg,#d4b860,#e8d0a0,#f5e8c0,#e8d0a0,#d4b860)',
+      'linear-gradient(90deg,#b8a060,#d8c490,#e8d8b0,#d8c490,#b8a060)',
+    ];
+    return tints[Math.floor(Math.random() * tints.length)];
+  }
+
+  // ------------------------------------------------------------------
+  // Build decorative tower pipes (left or right)
+  // ------------------------------------------------------------------
+  function buildTowerPipes(container, count) {
+    // Three ranks per tower: outer (tall) → middle → inner (shorter)
+    const ranks = [
+      { n: Math.floor(count * 0.35), hMin: 280, hMax: 360, w: 22 },
+      { n: Math.floor(count * 0.35), hMin: 180, hMax: 260, w: 18 },
+      { n: Math.floor(count * 0.30), hMin: 100, hMax: 170, w: 14 },
+    ];
+
+    ranks.forEach(function (rank) {
+      const rankEl = document.createElement('div');
+      rankEl.className = 'tower-rank';
+
+      for (let i = 0; i < rank.n; i++) {
+        const t = i / (rank.n - 1 || 1);
+        const h = Math.round(rank.hMax - t * (rank.hMax - rank.hMin));
+        const w = Math.round(rank.w - t * 3);
+
+        const pipe = document.createElement('div');
+        pipe.className = 'pipe pipe-decorative';
+        pipe.style.height = h + 'px';
+        pipe.style.width  = w + 'px';
+        pipe.style.background = decorativePipeGradient();
+
+        rankEl.appendChild(pipe);
+      }
+
+      container.appendChild(rankEl);
+    });
+  }
+
+  // ------------------------------------------------------------------
+  // Build decorative rückpositiv pipes (small, in center below console)
+  // ------------------------------------------------------------------
+  function buildRuckpositivPipes(container) {
+    const count = 18;
+    const rankEl = document.createElement('div');
+    rankEl.className = 'ruckpositiv-rank';
+
+    for (let i = 0; i < count; i++) {
+      const mid = (count - 1) / 2;
+      const dist = Math.abs(i - mid) / mid; // 0 at center, 1 at edges
+      const h = Math.round(120 - dist * 50); // 120 px center → 70 px edge
+      const w = Math.round(12 - dist * 4);
+
+      const pipe = document.createElement('div');
+      pipe.className = 'pipe pipe-decorative pipe-ruck';
+      pipe.style.height = h + 'px';
+      pipe.style.width  = w + 'px';
+      pipe.style.background = decorativePipeGradient();
+
+      rankEl.appendChild(pipe);
+    }
+    container.appendChild(rankEl);
+  }
+
+  // ------------------------------------------------------------------
+  // Build pedal pipes (very wide, short bass pipes)
+  // ------------------------------------------------------------------
+  function buildPedalPipes(container, count) {
+    for (let i = 0; i < count; i++) {
+      const t = i / (count - 1 || 1);
+      const h = Math.round(100 - t * 30);
+      const w = Math.round(36 - t * 8);
+
+      const pipe = document.createElement('div');
+      pipe.className = 'pipe pipe-decorative pipe-pedal';
+      pipe.style.height = h + 'px';
+      pipe.style.width  = w + 'px';
+      pipe.style.background =
+        'linear-gradient(90deg,#6a4a28,#8a6038,#a07848,#8a6038,#6a4a28)';
+
+      container.appendChild(pipe);
+    }
+  }
+
+  // ------------------------------------------------------------------
   // Build the UI: pipes + keyboards per division
   // ------------------------------------------------------------------
   function buildUI() {
-    DIV_ORDER.forEach((divName) => {
+    // ---- Tower pipes (decorative) ----
+    buildTowerPipes(towerLeftPipes, 30);
+    buildTowerPipes(towerRightPipes, 30);
+
+    // ---- Rückpositiv pipes (decorative) ----
+    buildRuckpositivPipes(ruckpositivPipes);
+
+    // ---- Pedal pipes (decorative) ----
+    buildPedalPipes(pedalLeft, 10);
+    buildPedalPipes(pedalRight, 10);
+
+    // ---- Hauptwerk pipes (playable, 4 divisions) ----
+    DIV_ORDER.forEach(function (divName) {
       const div = DIVISIONS[divName];
       const n = div.keys.length;
 
-      // --- Pipes group ---
       const groupEl = document.createElement('div');
       groupEl.className = 'pipe-group pipe-group--' + div.cls;
       groupEl.dataset.division = divName;
 
-      // Height range for this division (choir=tallest → solo=shortest)
       const heightMin = { choir: 130, great: 110, swell: 90, solo: 70 }[divName];
       const heightMax = { choir: 200, great: 175, swell: 150, solo: 125 }[divName];
       const widthBase  = { choir: 28, great: 26, swell: 24, solo: 22 }[divName];
@@ -124,9 +232,14 @@
         elements[div.keys[i]] = { ...(elements[div.keys[i]] || {}), pipeEl };
       }
 
-      pipesContainer.appendChild(groupEl);
+      hauptwerkPipes.appendChild(groupEl);
+    });
 
-      // --- Keyboard row ---
+    // ---- Keyboard rows (4 manuals) ----
+    DIV_ORDER.forEach(function (divName) {
+      const div = DIVISIONS[divName];
+      const n = div.keys.length;
+
       const kbRow = document.createElement('div');
       kbRow.className = 'keyboard-row keyboard-row--' + div.cls;
 
@@ -147,18 +260,16 @@
         keyEl.dataset.key = keyChar;
         keyEl.dataset.freq = info.freq;
         keyEl.dataset.division = divName;
-        // Dual label: note name primary, keyboard char secondary
-        keyEl.innerHTML = '<span class="key-note">' + info.label + '</span>' +
-                          '<span class="key-hint">' + keyChar + '</span>';
-        keyEl.title = info.label + ' &mdash; ' + div.label + ' [' + keyChar + ']';
+        keyEl.innerHTML =
+          '<span class="key-note">' + info.label + '</span>' +
+          '<span class="key-hint">' + keyChar + '</span>';
+        keyEl.title = info.label + ' \u2014 ' + div.label + ' [' + keyChar + ']';
 
-        // Mouse
-        keyEl.addEventListener('mousedown', (e) => { e.preventDefault(); press(keyChar); });
-        keyEl.addEventListener('mouseup',   () => release(keyChar));
-        keyEl.addEventListener('mouseleave',() => release(keyChar));
-        // Touch
-        keyEl.addEventListener('touchstart',(e) => { e.preventDefault(); press(keyChar); });
-        keyEl.addEventListener('touchend',  () => release(keyChar));
+        keyEl.addEventListener('mousedown', function (e) { e.preventDefault(); press(keyChar); });
+        keyEl.addEventListener('mouseup',   function () { release(keyChar); });
+        keyEl.addEventListener('mouseleave', function () { release(keyChar); });
+        keyEl.addEventListener('touchstart', function (e) { e.preventDefault(); press(keyChar); });
+        keyEl.addEventListener('touchend',  function () { release(keyChar); });
 
         keysWrap.appendChild(keyEl);
         elements[keyChar] = { ...(elements[keyChar] || {}), keyEl };
@@ -172,8 +283,8 @@
   // ------------------------------------------------------------------
   // Organ engine
   // ------------------------------------------------------------------
-  let organ = null;
-  let initPromise = null;
+  var organ = null;
+  var initPromise = null;
 
   async function ensureOrgan() {
     if (organ) {
@@ -181,8 +292,8 @@
       return;
     }
     if (!initPromise) {
-      initPromise = (async () => {
-        const eng = new PipeOrganEngine();
+      initPromise = (async function () {
+        var eng = new PipeOrganEngine();
         await eng.init();
         organ = eng;
       })();
@@ -193,11 +304,11 @@
   // ------------------------------------------------------------------
   // Press / release
   // ------------------------------------------------------------------
-  const held = new Set();
+  var held = new Set();
 
   async function press(keyChar) {
     if (held.has(keyChar)) return;
-    const info = KEY_MAP[keyChar];
+    var info = KEY_MAP[keyChar];
     if (!info) return;
 
     held.add(keyChar);
@@ -205,7 +316,7 @@
     organ.noteOn(info.freq, info.division);
     updateVoiceCount();
 
-    const els = elements[keyChar];
+    var els = elements[keyChar];
     if (els) {
       if (els.pipeEl) els.pipeEl.classList.add('active');
       if (els.keyEl)  els.keyEl.classList.add('active');
@@ -216,12 +327,12 @@
     if (!held.has(keyChar)) return;
     held.delete(keyChar);
 
-    const info = KEY_MAP[keyChar];
+    var info = KEY_MAP[keyChar];
     if (!info || !organ) return;
     organ.noteOff(info.freq, info.division);
     updateVoiceCount();
 
-    const els = elements[keyChar];
+    var els = elements[keyChar];
     if (els) {
       if (els.pipeEl) els.pipeEl.classList.remove('active');
       if (els.keyEl)  els.keyEl.classList.remove('active');
@@ -229,35 +340,34 @@
   }
 
   function releaseAll() {
-    for (const k of held) release(k);
+    held.forEach(function (k) { release(k); });
     held.clear();
   }
 
   function updateVoiceCount() {
     if (!voiceCountEl || !organ) return;
-    const n = organ.activeVoiceCount;
+    var n = organ.activeVoiceCount;
     voiceCountEl.textContent = n > 0 ? 'Voices: ' + n : '';
   }
 
   // ------------------------------------------------------------------
   // Keyboard events
   // ------------------------------------------------------------------
-  document.addEventListener('keydown', (e) => {
+  document.addEventListener('keydown', function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-    const ch = e.key.length === 1 ? e.key : '';
-    const upper = ch.toUpperCase();
+    var ch = e.key.length === 1 ? e.key : '';
+    var upper = ch.toUpperCase();
     if (ch && KEY_MAP[ch]) {
       e.preventDefault(); press(ch);
     } else if (upper !== ch && KEY_MAP[upper]) {
-      // e.g. ';' → upper=';' same char — won't double-fire
       e.preventDefault(); press(upper);
     }
   });
 
-  document.addEventListener('keyup', (e) => {
-    const ch = e.key.length === 1 ? e.key : '';
-    const upper = ch.toUpperCase();
+  document.addEventListener('keyup', function (e) {
+    var ch = e.key.length === 1 ? e.key : '';
+    var upper = ch.toUpperCase();
     if (ch && KEY_MAP[ch]) release(ch);
     else if (upper !== ch && KEY_MAP[upper]) release(upper);
   });
@@ -267,9 +377,9 @@
   // ------------------------------------------------------------------
   // Tremulant button
   // ------------------------------------------------------------------
-  tremulantBtn.addEventListener('click', async () => {
+  tremulantBtn.addEventListener('click', async function () {
     await ensureOrgan();
-    const active = organ.toggleTremulant();
+    var active = organ.toggleTremulant();
     tremulantBtn.textContent = active ? 'Tremulant: On' : 'Tremulant: Off';
     tremulantBtn.classList.toggle('active', active);
   });
@@ -277,7 +387,7 @@
   // ------------------------------------------------------------------
   // First gesture init
   // ------------------------------------------------------------------
-  document.addEventListener('click', async () => { await ensureOrgan(); }, { once: true });
+  document.addEventListener('click', async function () { await ensureOrgan(); }, { once: true });
 
   // ------------------------------------------------------------------
   // Boot
